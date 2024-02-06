@@ -3,10 +3,10 @@ Version 3.1 (beta)
 Attention: This is my first experience with the Victron system. I offer it "as it is" for persons with sufficient knowledge and experience and under exclusion of any kind of liability. You should review and understand the code before using it. Please read carefully the explanation of all parameters in settings.py. None of them is universal, you have to adapt everything to your system. 
 
 My hardware:
-- 3x MultiPlus-II 48/5000/70-50
-- 1x SmartSolar MPPT VE.Can 250/100
-- 1x Fronius Symo 15.0-3-M
-- 2x LTO batteries 22S x 5P with JK BMS 2A24S20P
+- 1x MultiPlus-II 48/5000/70-50
+- 4x BlueSolar MPPT 100/20
+- 6x APSystems DS3
+- 1x LiFePo4 battery 16S with BMS JK-B2A24S
 
 Please report the bugs and propose improvements. Many thanks to all who already participated. According previous experience I prefer if you attach a piece of code instead of creating a merge request. And please understand, that I'm not able to include all proposals, this would make the program too complex and difficult to maintain.
 
