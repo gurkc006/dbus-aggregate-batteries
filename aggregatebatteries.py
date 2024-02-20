@@ -54,6 +54,7 @@ class DbusAggBatService(object):
         self._lastBalancing = 0                 # Day in year
         self._dynamicCVL = False                # set if the CVL needs to be reduced due to peaking            
         self._logTimer = 0                      # measure logging period in seconds
+        self._EssActive = 0
         
         # read initial charge from text file
         try:
@@ -140,7 +141,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
-        self._dbusservice.add_path('/Ess/Active', 0, writeable=True)
+        self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=validate_new_value)
         self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -153,6 +154,11 @@ class DbusAggBatService(object):
         x.start()   
 
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
+
+    def _updateEssActive(self):
+        self._EssActive = newValue
+        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
+        return 1
 
     ##############################################################################################################
     ##############################################################################################################
@@ -381,7 +387,7 @@ class DbusAggBatService(object):
         ChargeMode_list = []                 # Bulk, Absorption, Float, Keep always max voltage   
 
         # Ess stuff
-        EssActive = 0
+        #EssActive = 0
         MpptCurrent = 0
         MpptPower = 0
         MaxChargePower = 0
@@ -570,7 +576,7 @@ class DbusAggBatService(object):
         # Calculate own charge/discharge parameters (overwrite the values received from the SerialBattery) #
         ####################################################################################################
         
-        if OWN_CHARGE_PARAMETERS and (EssActive == 1):
+        if OWN_CHARGE_PARAMETERS and (self._EssActive == 1):
             CVL_NORMAL = NR_OF_CELLS_PER_BATTERY * CHARGE_VOLTAGE_LIST[int((dt.now()).strftime('%m')) - 1]
             CVL_BALANCING = NR_OF_CELLS_PER_BATTERY * BALANCING_VOLTAGE
             ChargeVoltageBattery = CVL_NORMAL
@@ -771,9 +777,6 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
-            if EssActive != bus['/Ess/Active']:
-                EssActive = bus['/Ess/Active']
-                logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), EssActive))
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
             bus['/Ess/MpptPower'] = round(MpptPower, 0)
             bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
