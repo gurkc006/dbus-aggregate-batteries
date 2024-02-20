@@ -140,6 +140,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
+        self._dbusservice.add_path('/Ess/Active', None, writeable=True)
         self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -380,6 +381,7 @@ class DbusAggBatService(object):
         ChargeMode_list = []                 # Bulk, Absorption, Float, Keep always max voltage   
 
         # Ess stuff
+        EssActive = 0
         MpptCurrent = 0
         MpptPower = 0
         MaxChargePower = 0
@@ -562,7 +564,7 @@ class DbusAggBatService(object):
         # Calculate own charge/discharge parameters (overwrite the values received from the SerialBattery) #
         ####################################################################################################
         
-        if OWN_CHARGE_PARAMETERS:                                                           
+        if OWN_CHARGE_PARAMETERS and (EssActive == 1):
             CVL_NORMAL = NR_OF_CELLS_PER_BATTERY * CHARGE_VOLTAGE_LIST[int((dt.now()).strftime('%m')) - 1]
             CVL_BALANCING = NR_OF_CELLS_PER_BATTERY * BALANCING_VOLTAGE
             ChargeVoltageBattery = CVL_NORMAL
@@ -763,6 +765,9 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
+            if EssActive <> bus['/Ess/Active']:
+                EssActive = bus['/Ess/Active']
+                logging.info('%d: EssActive manually set to '  % EssActive)
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
             bus['/Ess/MpptPower'] = round(MpptPower, 0)
             bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
