@@ -525,9 +525,9 @@ class DbusAggBatService(object):
         
         # find max. charge voltage (if needed)
         #if not OWN_CHARGE_PARAMETERS:
-            MaxChargeVoltage = self._fn._min(MaxChargeVoltage_list)                     # add KEEP_MAX_CVL
-            MaxChargeCurrent = self._fn._min(MaxChargeCurrent_list) * NR_OF_BATTERIES
-            MaxDischargeCurrent = self._fn._min(MaxDischargeCurrent_list) * NR_OF_BATTERIES
+        MaxChargeVoltage = self._fn._min(MaxChargeVoltage_list)                     # add KEEP_MAX_CVL
+        MaxChargeCurrent = self._fn._min(MaxChargeCurrent_list) * NR_OF_BATTERIES
+        MaxDischargeCurrent = self._fn._min(MaxDischargeCurrent_list) * NR_OF_BATTERIES
         
         AllowToCharge = self._fn._min(AllowToCharge_list)
         AllowToDischarge = self._fn._min(AllowToDischarge_list)
