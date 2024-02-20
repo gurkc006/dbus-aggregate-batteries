@@ -33,11 +33,6 @@ sys.path.append('/opt/victronenergy/dbus-systemcalc-py/ext/velib_python')
 from vedbus import VeDbusService
 
 class DbusAggBatService(object):
-
-    def _updateEssActive(self):
-        self._EssActive = newValue
-        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-        return true
     
     def __init__(self, servicename='com.victronenergy.battery.aggregate'):
         self._fn = Functions()
@@ -160,6 +155,11 @@ class DbusAggBatService(object):
 
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
+    def _updateEssActive(self, path, value):
+        self._EssActive = newValue
+        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
+        return True
+        
     ##############################################################################################################
     ##############################################################################################################
     ### Starting battery dbus monitor in external thread (otherwise collision with AggregateBatteries service) ###
