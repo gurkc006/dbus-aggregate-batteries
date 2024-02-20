@@ -151,7 +151,7 @@ class DbusAggBatService(object):
         x = Thread(target = self._startMonitor)
         x.start()   
     
-        GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
+        GLib.timeout_add(500, self._find_settings)                     # search com.victronenergy.settings
 
     ##############################################################################################################
     ##############################################################################################################
