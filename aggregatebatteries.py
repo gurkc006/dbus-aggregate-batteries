@@ -765,7 +765,7 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
-            if EssActive <> bus['/Ess/Active']:
+            if EssActive != bus['/Ess/Active']:
                 EssActive = bus['/Ess/Active']
                 logging.info('%d: EssActive manually set to '  % EssActive)
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
