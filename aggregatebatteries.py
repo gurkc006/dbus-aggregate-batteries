@@ -152,8 +152,6 @@ class DbusAggBatService(object):
         x = Thread(target = self._startMonitor)
         x.start()   
 
-        self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/OvervoltageFeedIn', 1)
-
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
     ##############################################################################################################
@@ -775,7 +773,7 @@ class DbusAggBatService(object):
             # ess stuff
             if EssActive != bus['/Ess/Active']:
                 EssActive = bus['/Ess/Active']
-                logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), EssActive)
+                logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), EssActive))
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
             bus['/Ess/MpptPower'] = round(MpptPower, 0)
             bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
