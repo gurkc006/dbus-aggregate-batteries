@@ -654,7 +654,10 @@ class DbusAggBatService(object):
             else:
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
 
-        MaxChargePower = MaxChargeCurrent * Voltage
+        if MaxChargeCurrent:
+            MaxChargePower = MaxChargeCurrent * Voltage
+        else:
+            MaxChargePower = 0
 
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #
