@@ -763,9 +763,9 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
-            bus['/Ess/MpptCurrent'] = MpptCurrent
-            bus['/Ess/MpptPower'] = MpptPower
-            bus['/Ess/MaxChargePower'] = MaxChargePower
+            bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
+            bus['/Ess/MpptPower'] = round(MpptPower, 0)
+            bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
