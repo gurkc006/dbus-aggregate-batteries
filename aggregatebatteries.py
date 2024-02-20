@@ -524,7 +524,7 @@ class DbusAggBatService(object):
         BmsCable_alarm = self._fn._max(BmsCable_alarm_list)
         
         # find max. charge voltage (if needed)
-        if not OWN_CHARGE_PARAMETERS:
+        #if not OWN_CHARGE_PARAMETERS:
             MaxChargeVoltage = self._fn._min(MaxChargeVoltage_list)                     # add KEEP_MAX_CVL
             MaxChargeCurrent = self._fn._min(MaxChargeCurrent_list) * NR_OF_BATTERIES
             MaxDischargeCurrent = self._fn._min(MaxDischargeCurrent_list) * NR_OF_BATTERIES
