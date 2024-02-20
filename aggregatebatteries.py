@@ -37,7 +37,7 @@ class DbusAggBatService(object):
     def _updateEssActive(self):
         self._EssActive = newValue
         logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-        return 1
+        return true
     
     def __init__(self, servicename='com.victronenergy.battery.aggregate'):
         self._fn = Functions()
