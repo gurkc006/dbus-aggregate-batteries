@@ -530,8 +530,6 @@ class DbusAggBatService(object):
         AllowToCharge = self._fn._min(AllowToCharge_list)
         AllowToDischarge = self._fn._min(AllowToDischarge_list)
         AllowToBalance = self._fn._min(AllowToBalance_list)
-
-        MaxChargePower = MaxChargeCurrent * Voltage
         
         ####################################
         # Measure current by Victron stuff #
@@ -650,7 +648,9 @@ class DbusAggBatService(object):
                 MaxDischargeCurrent = 0
             else:
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
-                
+
+        MaxChargePower = MaxChargeCurrent * Voltage
+
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #
         ###########################################################
