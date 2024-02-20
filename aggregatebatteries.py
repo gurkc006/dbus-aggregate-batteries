@@ -14,7 +14,7 @@ https://github.com/victronenergy/venus/wiki/dbus
 https://github.com/victronenergy/velib_python
 """
 
-VERSION = '3.1'
+VERSION = '1.0'
 
 from gi.repository import GLib
 import logging
@@ -146,7 +146,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
-        self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=_updateEssActive)
+        self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=self._updateEssActive)
         self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
