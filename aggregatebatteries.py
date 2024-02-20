@@ -140,7 +140,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
-        self._dbusservice.add_path('/Ess/Active', None, writeable=True)
+        self._dbusservice.add_path('/Ess/Active', 0, writeable=True)
         self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -151,7 +151,9 @@ class DbusAggBatService(object):
 
         x = Thread(target = self._startMonitor)
         x.start()   
-    
+
+        self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/OvervoltageFeedIn', 1)
+
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
     ##############################################################################################################
