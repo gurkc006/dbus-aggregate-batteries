@@ -140,7 +140,8 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
-        self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
+        self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcOutInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -378,6 +379,10 @@ class DbusAggBatService(object):
         AllowToBalance_list = []             # minimum of all to be transmitted
         ChargeMode_list = []                 # Bulk, Absorption, Float, Keep always max voltage   
 
+        # Ess stuff
+        MpptCurrent = 0
+        MpptPower = 0
+
         ####################################################
         # Get DBus values from all SerialBattery instances #
         ####################################################
@@ -533,7 +538,9 @@ class DbusAggBatService(object):
             try:
                 Current_VE = self._dbusMon.dbusmon.get_value(self._multi, '/Dc/0/Current')                                          # get DC current of multi/quattro (or system of them)
                 for i in range(NR_OF_MPPTS):
-                    Current_VE += self._dbusMon.dbusmon.get_value(self._mppts_list[i], '/Dc/0/Current')                             # add DC current of all MPPTs (if present)          
+                    MpptCurrent += self._dbusMon.dbusmon.get_value(self._mppts_list[i], '/Dc/0/Current')                             # add DC current of all MPPTs (if present)          
+                Current_VE += MpptCurrent
+                MpptPower = MpptCurrent * Voltage
                 
                 if DC_LOADS:
                     if INVERT_SMARTSHUNT:
@@ -752,6 +759,10 @@ class DbusAggBatService(object):
                 logging.error('%s: BMS connection lost.' % (dt.now()).strftime('%c'))
             '''    
             
+            # ess stuff
+            bus['/Ess/MpptCurrent'] = MpptCurrent
+            bus['/Ess/MpptPower'] = MpptPower
+
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
             bus['/Io/AllowToDischarge'] = AllowToDischarge
