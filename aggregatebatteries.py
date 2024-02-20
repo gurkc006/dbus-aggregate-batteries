@@ -773,7 +773,7 @@ class DbusAggBatService(object):
             # ess stuff
             if EssActive != bus['/Ess/Active']:
                 EssActive = bus['/Ess/Active']
-                logging.info('%d: EssActive manually set to '  % EssActive)
+                logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), EssActive)
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
             bus['/Ess/MpptPower'] = round(MpptPower, 0)
             bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
