@@ -385,6 +385,7 @@ class DbusAggBatService(object):
         MpptCurrent = 0
         MpptPower = 0
         MaxChargePower = 0
+        MaxChargeCurrent = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -654,10 +655,7 @@ class DbusAggBatService(object):
             else:
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
 
-        if MaxChargeCurrent:
-            MaxChargePower = MaxChargeCurrent * Voltage
-        else:
-            MaxChargePower = 0
+        MaxChargePower = MaxChargeCurrent * Voltage
 
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #
