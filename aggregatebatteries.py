@@ -387,6 +387,7 @@ class DbusAggBatService(object):
         MaxChargePower = 0
         MaxChargeCurrent = 0
         MaxDischargeCurrent = 0
+        MaxChargeVoltage = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
