@@ -151,7 +151,7 @@ class DbusAggBatService(object):
         x = Thread(target = self._startMonitor)
         x.start()   
     
-        GLib.timeout_add(500, self._find_settings)                     # search com.victronenergy.settings
+        GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
     ##############################################################################################################
     ##############################################################################################################
@@ -382,6 +382,7 @@ class DbusAggBatService(object):
         # Ess stuff
         MpptCurrent = 0
         MpptPower = 0
+        MaxChargePower = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -529,6 +530,8 @@ class DbusAggBatService(object):
         AllowToCharge = self._fn._min(AllowToCharge_list)
         AllowToDischarge = self._fn._min(AllowToDischarge_list)
         AllowToBalance = self._fn._min(AllowToBalance_list)
+
+        MaxChargePower = MaxChargeCurrent * Voltage
         
         ####################################
         # Measure current by Victron stuff #
@@ -762,6 +765,7 @@ class DbusAggBatService(object):
             # ess stuff
             bus['/Ess/MpptCurrent'] = MpptCurrent
             bus['/Ess/MpptPower'] = MpptPower
+            bus['/Ess/MaxChargePower'] = MaxChargePower
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
