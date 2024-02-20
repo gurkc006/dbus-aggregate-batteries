@@ -156,10 +156,10 @@ class DbusAggBatService(object):
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
     def _updateEssActive(self, path, value):
-        self._EssActive = newValue
+        self._EssActive = value
         logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
         return True
-        
+    
     ##############################################################################################################
     ##############################################################################################################
     ### Starting battery dbus monitor in external thread (otherwise collision with AggregateBatteries service) ###
