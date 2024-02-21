@@ -53,7 +53,7 @@ MAX_CELL_VOLTAGE = 3.5                                  # If reached by 1-st cel
 MIN_CELL_VOLTAGE = 2.9                                  # If reached, discharge current set to zero
 MIN_CELL_HYSTERESIS = 0.1                               # Allow discharge above MIN_CELL_VOLTAGE + MIN_CELL_HYSTERESIS
 CELL_DIFF_MAX = 0.015                                   # If lower: re-enable DC-coupled PV feed in (if was disabled by dynamic CVL reduction and was enabled before); go back from BALANCING_VOLTAGE to CHARGE_VOLTAGE
-BATTERY_EFFICIENCY = 0.98                               # Ah fed into batteries are multiplied by efficiency 
+BATTERY_EFFICIENCY = 1.00                               # Ah fed into batteries are multiplied by efficiency 
 
 MAX_CHARGE_CURRENT = 150                                # Max. charge current at normal conditions
 MAX_DISCHARGE_CURRENT = 100                             # Max. discharge current at normal conditions
