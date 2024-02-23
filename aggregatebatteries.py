@@ -700,11 +700,11 @@ class DbusAggBatService(object):
         ###########################################################
 
         AcInPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/In/P')
-        AcInCurrent = AcInPower / 230
+        if AcInPower: AcInCurrent = AcInPower / 230
         AcOutPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/Out/P')
-        AcOutCurrent = AcOutPower / 230
+        if AcOutPower: AcOutCurrent = AcOutPower / 230
         InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
-        InverterCurrent = InverterPower / 230
+        if InverterPower: InverterCurrent = InverterPower / 230
 
         if (self._EssActive == 1):
             pass
