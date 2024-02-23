@@ -124,7 +124,8 @@ class DbusMon:
             '/SystemState/BatteryLife': dummy},
             
             'com.victronenergy.grid': {
-            '/Ac/Power': dummy},
+            '/Ac/Power': dummy,
+            '/ProductName': dummy},
 
             }
         
