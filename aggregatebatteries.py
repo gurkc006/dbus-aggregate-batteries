@@ -711,15 +711,15 @@ class DbusAggBatService(object):
 
         BatteryPower = Current
         BatteryCurrent = Power
+        MaxChargePower = MaxChargeCurrent * Voltage
 
         if (self._EssActive == 1):
-            AcPowerSetpoint = AcOutPower # - MpptPower
+            AcPowerSetpoint = AcOutPower - MpptPower
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
 
 
-        MaxChargePower = MaxChargeCurrent * Voltage
 
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #
