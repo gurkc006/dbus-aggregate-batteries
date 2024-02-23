@@ -361,7 +361,7 @@ class DbusAggBatService(object):
         logging.info('%s: Searching grid meter: Trial Nr. %d' % ((dt.now()).strftime('%c'),(self._searchTrials + 1)))
         try:
             for service in self._dbusConn.list_names():
-                logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
+                # logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
                 if GRID_KEY_WORD in service:
                     self._grid = service
                     logging.info('%s: %s found.' % ((dt.now()).strftime('%c'),(self._dbusMon.dbusmon.get_value(service, '/ProductName'))))
@@ -741,6 +741,7 @@ class DbusAggBatService(object):
         InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Inverter/P')
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
+        GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
 
         BatteryPower = Power
         BatteryCurrent = Current
