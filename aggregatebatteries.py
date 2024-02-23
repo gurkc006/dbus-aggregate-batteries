@@ -714,7 +714,7 @@ class DbusAggBatService(object):
         MaxChargePower = MaxChargeCurrent * Voltage
 
         if (self._EssActive == 1):
-            AcPowerSetpoint = AcOutPower - MpptPower + min(MaxChargePower,MpptPower)
+            AcPowerSetpoint = AcOutPower - MpptPower + (MaxChargePower-MpptPower)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
