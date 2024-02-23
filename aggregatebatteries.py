@@ -146,10 +146,12 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/BatteryI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/MpptP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
-        self._dbusservice.add_path('/Ess/InverterInP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/InverterInI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
-        self._dbusservice.add_path('/Ess/InverterOutP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/InverterOutI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/AcInP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcInI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/AcOutP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcOutI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/InverterP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/InverterI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/MaxChargeP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChargeI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -411,10 +413,12 @@ class DbusAggBatService(object):
         BatteryCurrent = 0
         MpptCurrent = 0
         MpptPower = 0
-        InverterInPower = 0
-        InverterInCurrent = 0
-        InverterOutPower = 0
-        InverterOutCurrent = 0
+        AcInPower = 0
+        AcInCurrent = 0
+        AcOutPower = 0
+        AcOutCurrent = 0
+        InverterPower = 
+        InverterCurrent = 0
         MaxChargePower = 0
         MaxChargeCurrent = 0
         MaxDischargePower = 0
@@ -695,6 +699,13 @@ class DbusAggBatService(object):
         # my ESS test code here #
         ###########################################################
 
+        AcInPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/In/P')
+        AcInCurrent = AcInPower / 230
+        AcOutPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/Out/P')
+        AcOutCurrent = AcOutPower / 230
+        InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
+        InverterCurrent = InverterPower / 230
+
         if (self._EssActive == 1):
             pass
 
@@ -819,10 +830,12 @@ class DbusAggBatService(object):
             bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
             bus['/Ess/MpptP'] = round(MpptPower,0)
             bus['/Ess/MpptI'] = round(MpptCurrent, 2)
-            bus['/Ess/InverterInP'] = round(InverterInPower,0)
-            bus['/Ess/InverterInI'] = round(InverterInCurrent,2)
-            bus['/Ess/InverterOutP'] = round(InverterOutPower,0)
-            bus['/Ess/InverterOutI'] = round(InverterOutCurrent,2)
+            bus['/Ess/AcInP'] = round(AcInPower,0)
+            bus['/Ess/AcInI'] = round(AcInCurrent,2)
+            bus['/Ess/AcOutP'] = round(AcOutPower,0)
+            bus['/Ess/AcOutI'] = round(AcOutCurrent,2)
+            bus['/Ess/InverterP'] = round(InverterPower,0)
+            bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0)
