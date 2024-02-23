@@ -181,10 +181,10 @@ class DbusAggBatService(object):
         logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
         if value == 0:
             self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
-            logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+            logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
         elif value == 1:
             self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
-            logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
+            logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
         else:
             logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
         return True
@@ -696,7 +696,7 @@ class DbusAggBatService(object):
         ###########################################################
 
         if (self._EssActive == 1):
-            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/OvervoltageFeedIn', 0)
+            pass
 
         MaxChargePower = MaxChargeCurrent * Voltage
 
