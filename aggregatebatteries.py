@@ -151,7 +151,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/InverterOutP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/InverterOutI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/MaxChargeP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/MaxChargeC', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
 
