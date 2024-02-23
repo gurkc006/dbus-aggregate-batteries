@@ -156,6 +156,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/MaxChargeI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -426,6 +427,7 @@ class DbusAggBatService(object):
         MaxChargeVoltage = 0
         GridSetpoint = 0
         GridPower = 0
+        AcPowerSetpoint = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -705,6 +707,8 @@ class DbusAggBatService(object):
         AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
         InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Inverter/P')
         InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
+
+        Hub4/L1/AcPowerSetpoint
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
 
         if (self._EssActive == 1):
@@ -837,7 +841,8 @@ class DbusAggBatService(object):
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
-            bus['/Ess/GridP'] = round(GridPower,0)            
+            bus['/Ess/GridP'] = round(GridPower,0)    
+            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0)        
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
