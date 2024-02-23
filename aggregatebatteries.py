@@ -417,7 +417,7 @@ class DbusAggBatService(object):
         AcInCurrent = 0
         AcOutPower = 0
         AcOutCurrent = 0
-        InverterPower = 
+        InverterPower = 0
         InverterCurrent = 0
         MaxChargePower = 0
         MaxChargeCurrent = 0
