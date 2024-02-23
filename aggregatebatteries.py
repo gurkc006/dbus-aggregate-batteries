@@ -709,8 +709,8 @@ class DbusAggBatService(object):
         InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
 
-        BatteryPower = Current
-        BatteryCurrent = Power
+        BatteryPower = Power
+        BatteryCurrent = Current
         MaxChargePower = MaxChargeCurrent * Voltage
 
         if (self._EssActive == 1):
