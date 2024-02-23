@@ -142,24 +142,24 @@ class DbusAggBatService(object):
 
         # Create battery current control paths
         self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=self._updateEssActive)
-        self._dbusservice.add_path('/Ess/MpptCurrent', None, writeable=True, gettextcallback=lambda a, x: "{:.2f}W".format(x))
-        self._dbusservice.add_path('/Ess/MpptPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/AcInInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/AcOutInverterPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/GridPower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
-        self._dbusservice.add_path('/Ess/MaxChargePower', None, writeable=True, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/BatteryP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/BatteryI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/MpptP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/MpptI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/InverterInP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/InverterInI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/InverterOutP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/InverterOutI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeC', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
 
         x = Thread(target = self._startMonitor)
         x.start()   
 
         GLib.timeout_add(1000, self._find_settings)                     # search com.victronenergy.settings
 
-    def _updateEssActive(self, path, value):
-        self._EssActive = value
-        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-        return True
-    
     ##############################################################################################################
     ##############################################################################################################
     ### Starting battery dbus monitor in external thread (otherwise collision with AggregateBatteries service) ###
@@ -169,6 +169,25 @@ class DbusAggBatService(object):
     def _startMonitor(self):
         logging.info('%s: Starting battery monitor.' % (dt.now()).strftime('%c'))
         self._dbusMon = DbusMon()
+
+    #####################################################################
+    #####################################################################
+    ### switch Ess test features on/off                               ###
+    #####################################################################
+    #####################################################################
+
+    def _updateEssActive(self, path, value):
+        self._EssActive = value
+        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
+        if value == 0:
+            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
+            logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+        elif value == 1:
+            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+            logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
+        else:
+            logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
+        return True
 
     #####################################################################
     #####################################################################
@@ -326,6 +345,7 @@ class DbusAggBatService(object):
             logging.error('%s: Required number of MPPTs not found. Exiting.' % (dt.now()).strftime('%c'))
             sys.exit()
 
+
     ##################################################################################
     ##################################################################################     
     #### aggregate values of physical batteries, perform calculations, update Dbus ###
@@ -387,13 +407,21 @@ class DbusAggBatService(object):
         ChargeMode_list = []                 # Bulk, Absorption, Float, Keep always max voltage   
 
         # Ess stuff
-        #EssActive = 0
+        BatteryPower = 0
+        BatteryCurrent = 0
         MpptCurrent = 0
         MpptPower = 0
+        InverterInPower = 0
+        InverterInCurrent = 0
+        InverterOutPower = 0
+        InverterOutCurrent = 0
         MaxChargePower = 0
         MaxChargeCurrent = 0
+        MaxDischargePower = 0
         MaxDischargeCurrent = 0
         MaxChargeVoltage = 0
+        GridSetpoint = 0
+        GridPower = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -576,7 +604,7 @@ class DbusAggBatService(object):
         # Calculate own charge/discharge parameters (overwrite the values received from the SerialBattery) #
         ####################################################################################################
         
-        if OWN_CHARGE_PARAMETERS and (self._EssActive == 1):
+        if OWN_CHARGE_PARAMETERS:
             CVL_NORMAL = NR_OF_CELLS_PER_BATTERY * CHARGE_VOLTAGE_LIST[int((dt.now()).strftime('%m')) - 1]
             CVL_BALANCING = NR_OF_CELLS_PER_BATTERY * BALANCING_VOLTAGE
             ChargeVoltageBattery = CVL_NORMAL
@@ -662,6 +690,13 @@ class DbusAggBatService(object):
                 MaxDischargeCurrent = 0
             else:
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
+
+        ###########################################################
+        # my ESS test code here #
+        ###########################################################
+
+        if (self._EssActive == 1):
+            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/OvervoltageFeedIn', 0)
 
         MaxChargePower = MaxChargeCurrent * Voltage
 
@@ -780,6 +815,21 @@ class DbusAggBatService(object):
             bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
             bus['/Ess/MpptPower'] = round(MpptPower, 0)
             bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
+
+            bus['/Ess/Active', 0, writeable=True, onchangecallback=self._updateEssActive)
+            
+            bus['/Ess/BatteryP'] = round(BatteryPower,0)
+            bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
+            bus['/Ess/MpptP'] = round(MpptPower,0)
+            bus['/Ess/MpptI'] = round(MpptCurrent, 2)
+            bus['/Ess/InverterInP'] = round(InverterInPower,0)
+            bus['/Ess/InverterInI'] = round(InverterInCurrent,2)
+            bus['/Ess/InverterOutP'] = round(InverterOutPower,0)
+            bus['/Ess/InverterOutI'] = round(InverterOutCurrent,2)
+            bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
+            bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
+            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0)
+            bus['/Ess/GridP'] = round(GridPower,0)            
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge

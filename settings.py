@@ -41,7 +41,7 @@ CHARGE_SAVE_PRECISION = 0.0025                          # Trade-off between save
 
 # Please note: Victron ESS disables CCL if DC-coupled PV feed-in is active. This program disables the DC-coupled PV feed-in when necessary.
 
-OWN_CHARGE_PARAMETERS = True                            # Calculate own charge/discharge control parameters (True) from following settings
+OWN_CHARGE_PARAMETERS = False                           # Calculate own charge/discharge control parameters (True) from following settings
                                                         # or use them from battery driver (False)
 BALANCING_VOLTAGE = 3.45                                # This voltage per cell will be set periodically and kept until balancing below CELL_DIFF_MAX and next charge cycle
 BALANCING_REPETITION = 1                                # in days                      
