@@ -104,15 +104,20 @@ class DbusMon:
             
             'com.victronenergy.vebus': {
             '/Dc/0/Current': dummy,
-            '/ProductName': dummy},
+            '/ProductName': dummy,
+            '/Devices/0/Ac/In/P': dummy,
+            '/Devices/0/Ac/Out/P': dummy,
+            '/Devices/0/Inverter/P': dummy},
             
             'com.victronenergy.solarcharger': {
             '/Dc/0/Current': dummy,
             '/ProductName': dummy},
             
             'com.victronenergy.settings': {
-            '/Settings/CGwacs/OvervoltageFeedIn': dummy},
-            
+            '/Settings/CGwacs/OvervoltageFeedIn': dummy,
+            '/Settings/CGwacs/Hub4Mode': dummy,
+            '/Settings/CGwacs/AcPowerSetPoint': dummy},
+
             'com.victronenergy.system': {
             '/SystemState/LowSoc': dummy,
             '/SystemState/BatteryLife': dummy},
