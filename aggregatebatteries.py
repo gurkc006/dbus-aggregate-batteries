@@ -357,7 +357,7 @@ class DbusAggBatService(object):
     #############################################################
     #############################################################
     
-     def _find_grid(self):
+    def _find_grid(self):
         logging.info('%s: Searching grid meter: Trial Nr. %d' % ((dt.now()).strftime('%c'),(self._searchTrials + 1)))
         try:
             for service in self._dbusConn.list_names():
