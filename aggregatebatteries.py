@@ -705,6 +705,7 @@ class DbusAggBatService(object):
         AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
         InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
         InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
+        GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Settings/CGwacs/AcPowerSetPoint')
 
         if (self._EssActive == 1):
             pass
@@ -835,7 +836,7 @@ class DbusAggBatService(object):
             bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
-            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0)
+            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else 0
             bus['/Ess/GridP'] = round(GridPower,0)            
 
             # this does not control the charger, is only displayed in GUI
