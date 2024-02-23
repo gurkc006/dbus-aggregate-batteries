@@ -38,6 +38,7 @@ class DbusAggBatService(object):
         self._fn = Functions()
         self._batteries_dict = {}               # marvo2011
         self._multi = None
+        self._grid = None
         self._mppts_list = []
         self._smartShunt = None
         self._searchTrials = 0
@@ -340,7 +341,7 @@ class DbusAggBatService(object):
         logging.info('%s: %d MPPT(s) found.' % ((dt.now()).strftime('%c'), mpptsCount))
         if mpptsCount == NR_OF_MPPTS:
             self._timeOld = tt.time()
-            GLib.timeout_add(1000, self._update)
+            GLib.timeout_add(1000, self._find_grid)
             return False                                                    # all OK, stop calling this function
         elif self._searchTrials < SEARCH_TRIALS:
             self._searchTrials += 1
@@ -348,6 +349,35 @@ class DbusAggBatService(object):
         else:
             logging.error('%s: Required number of MPPTs not found. Exiting.' % (dt.now()).strftime('%c'))
             sys.exit()
+
+
+    #############################################################
+    #############################################################
+    ### search grid meter ###
+    #############################################################
+    #############################################################
+    
+     def _find_grid(self):
+        logging.info('%s: Searching grid meter: Trial Nr. %d' % ((dt.now()).strftime('%c'),(self._searchTrials + 1)))
+        try:
+            for service in self._dbusConn.list_names():
+                if GRID_KEY_WORD in service:
+                    self._grid = service
+                    logging.info('%s: %s found.' % ((dt.now()).strftime('%c'),(self._dbusMon.dbusmon.get_value(service, '/ProductName'))))
+        except Exception:
+            pass
+            
+        if (self._grid != None):        
+            self._timeOld = tt.time()
+            GLib.timeout_add(1000, self._update)                    # if no MPPTs start the _update loop
+            return False                                                # all OK, stop calling this function
+        elif self._searchTrials < SEARCH_TRIALS:
+            self._searchTrials += 1
+            return True                                                 # next trial
+        else:
+            logging.error('%s: Grid meter not found. Exiting.' % (dt.now()).strftime('%c'))
+            sys.exit()    
+
 
 
     ##################################################################################
@@ -721,8 +751,6 @@ class DbusAggBatService(object):
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
-
-
 
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #

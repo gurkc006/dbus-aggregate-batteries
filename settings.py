@@ -19,6 +19,7 @@ BATTERY_PRODUCT_NAME_PATH = '/ProductName'              # Path of Battery Produc
 BATTERY_PRODUCT_NAME = 'SerialBattery'                  # Key world to identify the batteries (to exclude SmartShunt)
 BATTERY_INSTANCE_NAME_PATH = '/CustomName'              # if CustomName doesn't exist, set '/ProductName'
 MULTI_KEY_WORD = 'com.victronenergy.vebus'              # Key world to identify service of Multis/Quattros (or cluster of them)
+GRID_KEY_WORD = 'com.victronenergy.grid'                # Key world to identify service of gridmeter
 MPPT_KEY_WORD = 'com.victronenergy.solarcharger'        # Key world to identify services of solar chargers
 SMARTSHUNT_NAME_KEY_WORD = 'SmartShunt'                 # Key world to identify services of SmartShunt
 

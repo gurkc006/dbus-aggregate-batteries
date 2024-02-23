@@ -123,6 +123,9 @@ class DbusMon:
             '/SystemState/LowSoc': dummy,
             '/SystemState/BatteryLife': dummy},
             
+            'com.victronenergy.grid': {
+            '/Ac/Power': dummy},
+
             }
         
         self.dbusmon = DbusMonitor(self.monitorlist)    
@@ -142,7 +145,6 @@ def main():
     logging.basicConfig(level=logging.INFO)
     DBusGMainLoop(set_as_default=True)
     dbusmon = DbusMon()
-    
     
     #dbusmon.print_values('com.victronenergy.battery.ttyUSB2', 'com.victronenergy.battery')
     #dbusmon.print_values('com.victronenergy.vebus.ttyUSB0', 'com.victronenergy.vebus')
