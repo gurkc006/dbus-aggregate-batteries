@@ -705,7 +705,7 @@ class DbusAggBatService(object):
         AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
         InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
         InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
-        GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Settings/CGwacs/AcPowerSetPoint')
+        GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
 
         if (self._EssActive == 1):
             pass
