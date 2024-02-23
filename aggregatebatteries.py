@@ -144,6 +144,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=self._updateEssActive)
         self._dbusservice.add_path('/Ess/BatteryP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/BatteryI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/BatteryCalcI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/MpptP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MpptI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/AcInP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
@@ -428,6 +429,7 @@ class DbusAggBatService(object):
         GridSetpoint = 0
         GridPower = 0
         AcPowerSetpoint = 0
+        BatteryCurrentCalc = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -711,6 +713,7 @@ class DbusAggBatService(object):
 
         BatteryPower = Power
         BatteryCurrent = Current
+        BatteryCurrentCalc = MpptCurrent - InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
 
         if (self._EssActive == 1):
@@ -835,6 +838,7 @@ class DbusAggBatService(object):
             # ess stuff
             bus['/Ess/BatteryP'] = round(BatteryPower,0)
             bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
+            bus['/Ess/BatteryCalcI'] = round(BatteryCurrentCalc,2)
             bus['/Ess/MpptP'] = round(MpptPower,0)
             bus['/Ess/MpptI'] = round(MpptCurrent, 2)
             bus['/Ess/AcInP'] = round(AcInPower,0) if AcInPower is not None else 0
