@@ -812,9 +812,9 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
-            bus['/Ess/MpptCurrent'] = round(MpptCurrent, 2)
-            bus['/Ess/MpptPower'] = round(MpptPower, 0)
-            bus['/Ess/MaxChargePower'] = round(MaxChargePower, 0)
+            bus['/Ess/MpptI'] = round(MpptCurrent, 2)
+            bus['/Ess/MpptP'] = round(MpptPower, 0)
+            bus['/Ess/MaxChargeP'] = round(MaxChargePower, 0)
             bus['/Ess/BatteryP'] = round(BatteryPower,0)
             bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
             bus['/Ess/MpptP'] = round(MpptPower,0)
