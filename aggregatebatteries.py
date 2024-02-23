@@ -841,7 +841,7 @@ class DbusAggBatService(object):
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)    
-            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0)        
+            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1      
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
