@@ -827,11 +827,11 @@ class DbusAggBatService(object):
             bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
             bus['/Ess/MpptP'] = round(MpptPower,0)
             bus['/Ess/MpptI'] = round(MpptCurrent, 2)
-            bus['/Ess/AcInP'] = round(AcInPower,0)
-            bus['/Ess/AcInI'] = round(AcInCurrent,2)
-            bus['/Ess/AcOutP'] = round(AcOutPower,0)
+            bus['/Ess/AcInP'] = round(AcInPower,0) if AcInpower is not None else 0
+            bus['/Ess/AcInI'] = round(AcInCurrent,2) 
+            bus['/Ess/AcOutP'] = round(AcOutPower,0) if AcOutpower is not None else 0
             bus['/Ess/AcOutI'] = round(AcOutCurrent,2)
-            bus['/Ess/InverterP'] = round(InverterPower,0)
+            bus['/Ess/InverterP'] = round(InverterPower,0) if InverterInpower is not None else 0
             bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
