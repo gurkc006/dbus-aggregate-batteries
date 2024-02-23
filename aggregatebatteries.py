@@ -700,11 +700,11 @@ class DbusAggBatService(object):
         ###########################################################
 
         AcInPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/In/P')
-        AcInCurrent = AcInPower / 230 if (AcInPower) else 0
+        AcInCurrent = AcInPower / 230 if AcInPower is not None else 0
         AcOutPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/Out/P')
-        AcOutCurrent = AcOutPower / 230 if (AcOutPower) else 0
+        AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
         InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
-        InverterCurrent = InverterPower / 230 if (InverterPower) else 0
+        InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
 
         if (self._EssActive == 1):
             pass
@@ -823,9 +823,6 @@ class DbusAggBatService(object):
             '''    
             
             # ess stuff
-            bus['/Ess/MpptI'] = round(MpptCurrent, 2)
-            bus['/Ess/MpptP'] = round(MpptPower, 0)
-            bus['/Ess/MaxChargeP'] = round(MaxChargePower, 0)
             bus['/Ess/BatteryP'] = round(BatteryPower,0)
             bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
             bus['/Ess/MpptP'] = round(MpptPower,0)
