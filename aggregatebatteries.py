@@ -713,7 +713,7 @@ class DbusAggBatService(object):
 
         BatteryPower = Power
         BatteryCurrent = Current
-        BatteryCurrentCalc = MpptCurrent - InverterCurrent
+        BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
 
         if (self._EssActive == 1):
