@@ -365,7 +365,7 @@ class DbusAggBatService(object):
                     self._grid = service
                     logging.info('%s: %s found.' % ((dt.now()).strftime('%c'),(self._dbusMon.dbusmon.get_value(service, '/ProductName'))))
         except Exception:
-            pass
+            logging.info('%s: Exception' % (dt.now()).strftime('%c'))
             
         if (self._grid != None):        
             self._timeOld = tt.time()
