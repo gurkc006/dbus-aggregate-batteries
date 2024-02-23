@@ -699,11 +699,11 @@ class DbusAggBatService(object):
         # my ESS test code here #
         ###########################################################
 
-        AcInPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/In/P')
+        AcInPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/In/P')
         AcInCurrent = AcInPower / 230 if AcInPower is not None else 0
-        AcOutPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Ac/Out/P')
+        AcOutPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Out/P')
         AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
-        InverterPower = self._dbusMon.dbusmon.get_value('com.victronenergy.vebus.ttyUSB6', '/Devices/0/Inverter/P')
+        InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Inverter/P')
         InverterCurrent = InverterPower / 230 if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
 
