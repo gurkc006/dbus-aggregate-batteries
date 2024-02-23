@@ -210,7 +210,7 @@ class DbusAggBatService(object):
             
         if (self._settings != None):
             self._searchTrials = 0
-            GLib.timeout_add(5000, self._find_batteries)                # search batteries on DBus if present
+            GLib.timeout_add(1000, self._find_batteries)                # search batteries on DBus if present    ##### !!! was 5000 cg
             return False                                                # all OK, stop calling this function
         elif self._searchTrials < SEARCH_TRIALS:
             self._searchTrials += 1
@@ -836,7 +836,7 @@ class DbusAggBatService(object):
             bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
-            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else 0
+            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)            
 
             # this does not control the charger, is only displayed in GUI
