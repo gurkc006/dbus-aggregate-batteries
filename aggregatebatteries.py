@@ -196,7 +196,7 @@ class DbusAggBatService(object):
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
                 logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
-        elif path == '/Ess/SmoothFactor':
+        elif path == '/Ess/SmoothFilter':
             smoothFactor = value
             logging.info('%s: /Ess/SmoothFactor manually set to %d' % ((dt.now()).strftime('%c'), smoothFactor))
         else:
