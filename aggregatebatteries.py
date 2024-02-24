@@ -196,6 +196,9 @@ class DbusAggBatService(object):
             elif value == 1:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+            elif value == 2:
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
                 logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
         elif path == '/Ess/SmoothFilter':
@@ -768,9 +771,10 @@ class DbusAggBatService(object):
         self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
 
-        if (self._EssActive == 1):
+        if (self._EssActive > 0):
             AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePowerSmooth
-            if GridPower > GridSetpoint:
+            if (self._EssActive == 2):
+                if GridPower > GridSetpoint:
                     AcPowerSetpoint = AcPowerSetpoint - (GridPower - GridSetpoint)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
