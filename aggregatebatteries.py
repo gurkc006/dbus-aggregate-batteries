@@ -159,6 +159,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
+        self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}V".format(x))
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -461,6 +462,7 @@ class DbusAggBatService(object):
         GridPower = 0
         AcPowerSetpoint = 0
         BatteryCurrentCalc = 0
+        MaxChrgCellVoltage = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -747,6 +749,7 @@ class DbusAggBatService(object):
         BatteryCurrent = Current
         BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
+        MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
 
         if (self._EssActive == 1):
             AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePower
@@ -881,7 +884,8 @@ class DbusAggBatService(object):
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)    
-            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1      
+            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
+            bus['/Ess/MaxChrgCellVoltage'] = round(MaxChrgCellVoltage,3)    
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
