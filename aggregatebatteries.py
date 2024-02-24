@@ -770,6 +770,8 @@ class DbusAggBatService(object):
 
         if (self._EssActive == 1):
             AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePowerSmooth
+            if GridPower > GridSetpoint:
+                    AcPowerSetpoint = AcPowerSetpoint - (GridPower - GridSetpoint)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
