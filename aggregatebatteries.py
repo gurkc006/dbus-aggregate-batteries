@@ -199,7 +199,7 @@ class DbusAggBatService(object):
         elif path == '/Ess/SmoothFactor':
             smoothFactor = value
             logging.info('%s: /Ess/SmoothFactor manually set to %d' % ((dt.now()).strftime('%c'), smoothFactor))
-        else
+        else:
             pass
         
         return True
