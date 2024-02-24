@@ -56,6 +56,7 @@ class DbusAggBatService(object):
         self._dynamicCVL = False                # set if the CVL needs to be reduced due to peaking            
         self._logTimer = 0                      # measure logging period in seconds
         self._EssActive = 0
+        self._SmoothFilter = 0
         
         # read initial charge from text file
         try:
@@ -161,7 +162,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}V".format(x))
-        self._dbusservice.add_path('/Ess/SmoothFilter', None, writeable=True, onchangecallback=self._onDbusUpdate)
+        self._dbusservice.add_path('/Ess/SmoothFilter', self._SmoothFilter, writeable=True, onchangecallback=self._onDbusUpdate)
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -197,8 +198,8 @@ class DbusAggBatService(object):
             else:
                 logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
         elif path == '/Ess/SmoothFilter':
-            smoothFactor = value
-            logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), smoothFactor))
+            self._SmoothFilter = value
+            logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), self._SmoothFilter))
         else:
             pass
         
@@ -477,7 +478,6 @@ class DbusAggBatService(object):
         AcPowerSetpoint = 0
         BatteryCurrentCalc = 0
         MaxChrgCellVoltage = 0
-        SmoothFilter = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -765,7 +765,7 @@ class DbusAggBatService(object):
         BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
-        MaxChargeCurrentSmooth = ((SmoothFilter * MaxChargeCurrentSmooth) + MaxChargeCurrent) / (SmoothFilter + 1)
+        MaxChargeCurrentSmooth = ((self._SmoothFilter * MaxChargeCurrentSmooth) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = MaxChargeCurrentSmooth * Voltage
 
         if (self._EssActive == 1):
