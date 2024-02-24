@@ -35,6 +35,7 @@ CURRENT_FROM_VICTRON = True                             # If True, the current m
 OWN_SOC = True                                          # If True, the self calculated charge indicators are taken instead of BMS
 ZERO_SOC = False                                        # Allow zeroing charge counter at MIN_CELL_VOLTAGE. At full battery it is always set to 100%. 
 CHARGE_SAVE_PRECISION = 0.0025                          # Trade-off between save precision and file access frequency
+UPDATE_INTV = 500
 
 #######################################
 ##### Charge/Discharge parameters #####

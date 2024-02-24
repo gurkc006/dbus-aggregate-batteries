@@ -292,7 +292,7 @@ class DbusAggBatService(object):
                 GLib.timeout_add(1000, self._find_multis)               # if current from Victron stuff search multi/quattro on DBus
             else:
                 self._timeOld = tt.time()
-                GLib.timeout_add(1000, self._update)                    # if current from BMS start the _update loop
+                GLib.timeout_add(UPDATE_INTV, self._update)                    # if current from BMS start the _update loop
             return False                                                # all OK, stop calling this function
         elif self._searchTrials < SEARCH_TRIALS:
             self._searchTrials += 1
@@ -323,7 +323,7 @@ class DbusAggBatService(object):
                 GLib.timeout_add(1000, self._find_mppts)                # search MPPTs on DBus if present
             else:
                 self._timeOld = tt.time()
-                GLib.timeout_add(1000, self._update)                    # if no MPPTs start the _update loop
+                GLib.timeout_add(UPDATE_INTV, self._update)                    # if no MPPTs start the _update loop
             return False                                                # all OK, stop calling this function
         elif self._searchTrials < SEARCH_TRIALS:
             self._searchTrials += 1
@@ -383,7 +383,7 @@ class DbusAggBatService(object):
             
         if (self._grid != None):        
             self._timeOld = tt.time()
-            GLib.timeout_add(1000, self._update)                    # if no MPPTs start the _update loop
+            GLib.timeout_add(UPDATE_INTV, self._update)                    # if no MPPTs start the _update loop
             return False                                                # all OK, stop calling this function
         elif self._searchTrials < SEARCH_TRIALS:
             self._searchTrials += 1
