@@ -142,7 +142,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Io/AllowToBalance', None, writeable=True)
 
         # Create battery current control paths
-        self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=self._updateEssActive)
+        self._dbusservice.add_path('/Ess/Active', 0, writeable=True, onchangecallback=self._onDbusUpdate)
         self._dbusservice.add_path('/Ess/BatteryP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/BatteryI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/BatteryCalcI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
@@ -161,7 +161,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}V".format(x))
-        self._dbusservice.add_path('/Ess/SmoothFilter', None, writeable=True)
+        self._dbusservice.add_path('/Ess/SmoothFilter', None, writeable=True, onchangecallback=self._onDbusUpdate)
 
         x = Thread(target = self._startMonitor)
         x.start()   
