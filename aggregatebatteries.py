@@ -765,7 +765,7 @@ class DbusAggBatService(object):
         BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
-        MaxChargeCurrentSmooth = ((SmoothFilter * MaxChargeCurrentSmooth) + MaxChargeCurrent) / (Filter + 1)
+        MaxChargeCurrentSmooth = ((SmoothFilter * MaxChargeCurrentSmooth) + MaxChargeCurrent) / (SmoothFilter + 1)
         MaxChargePowerSmooth = MaxChargeCurrentSmooth * Voltage
 
         if (self._EssActive == 1):
