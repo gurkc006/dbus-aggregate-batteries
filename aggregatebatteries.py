@@ -57,6 +57,7 @@ class DbusAggBatService(object):
         self._logTimer = 0                      # measure logging period in seconds
         self._EssActive = 0
         self._SmoothFilter = 0
+        self._MaxChargeCurrentSm = 0
         
         # read initial charge from text file
         try:
@@ -467,7 +468,6 @@ class DbusAggBatService(object):
 
         MaxChargePower = 0
         MaxChargeCurrent = 0
-        MaxChargeCurrentSmooth = 0
         MaxChargeVoltage = 0
 
         MaxDischargePower = 0
@@ -765,8 +765,8 @@ class DbusAggBatService(object):
         BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
-        MaxChargeCurrentSmooth = ((self._SmoothFilter * MaxChargeCurrentSmooth) + MaxChargeCurrent) / (self._SmoothFilter + 1)
-        MaxChargePowerSmooth = MaxChargeCurrentSmooth * Voltage
+        self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
+        MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
 
         if (self._EssActive == 1):
             AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePowerSmooth
@@ -899,7 +899,7 @@ class DbusAggBatService(object):
             bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
-            bus['/Ess/MaxChargeIsm'] = round(MaxChargeCurrentSmooth,2)
+            bus['/Ess/MaxChargeIsm'] = round(self._MaxChargeCurrentSm,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)    
             bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
