@@ -156,10 +156,12 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/InverterI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/MaxChargeP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChargeI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeIsm', None, writeable=False, gettextcallback=lambda a, x: "{:.2f}A".format(x))
         self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}V".format(x))
+        self._dbusservice.add_path('/Ess/SmoothFilter', None, writeable=True)
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -182,18 +184,26 @@ class DbusAggBatService(object):
     #####################################################################
     #####################################################################
 
-    def _updateEssActive(self, path, value):
-        self._EssActive = value
-        logging.info('%s: EssActive manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-        if value == 0:
-            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
-            logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-        elif value == 1:
-            self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
-            logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
-        else:
-            logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
+    def _onDbusUpdate(self, path, value):
+        if path == '/Ess/Active':
+            self._EssActive = value
+            logging.info('%s: Ess/Active manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
+            if value == 0:
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
+                logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
+            elif value == 1:
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+            else:
+                logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
+        elif path == '/Ess/SmoothFactor':
+            smoothFactor = value
+            logging.info('%s: /Ess/SmoothFactor manually set to %d' % ((dt.now()).strftime('%c'), smoothFactor))
+        else
+            pass
+        
         return True
+
 
     #####################################################################
     #####################################################################
@@ -456,6 +466,7 @@ class DbusAggBatService(object):
         MaxChargePower = 0
         MaxChargeCurrent = 0
         MaxDischargePower = 0
+        MaxChargeCurrentSmooth = 0
         MaxDischargeCurrent = 0
         MaxChargeVoltage = 0
         GridSetpoint = 0
@@ -463,6 +474,7 @@ class DbusAggBatService(object):
         AcPowerSetpoint = 0
         BatteryCurrentCalc = 0
         MaxChrgCellVoltage = 0
+        SmoothFilter = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -750,9 +762,10 @@ class DbusAggBatService(object):
         BatteryCurrentCalc = MpptCurrent + InverterCurrent
         MaxChargePower = MaxChargeCurrent * Voltage
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
+        MaxChargePowerSmooth = ((SmoothFilter * MaxChargePowerSmooth) + MaxChargePower) / (Filter + 1)
 
         if (self._EssActive == 1):
-            AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePower
+            AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePowerSmooth
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
@@ -882,6 +895,7 @@ class DbusAggBatService(object):
             bus['/Ess/InverterI'] = round(InverterCurrent,2)
             bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
             bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
+            bus['/Ess/MaxChargeIsm'] = round(MaxChargeCurrentSmooth,2)
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)    
             bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
