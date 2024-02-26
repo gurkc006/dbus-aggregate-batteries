@@ -779,9 +779,9 @@ class DbusAggBatService(object):
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
-        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L1/Power')
-        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L2/Power')
-        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L3/Power')
+        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L1/Power')
+        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L2/Power')
+        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L3/Power')
         #ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
 
         BatteryPower = Power
@@ -931,9 +931,9 @@ class DbusAggBatService(object):
             bus['/Ess/GridP'] = round(GridPower,0)    
             bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
             bus['/Ess/MaxChrgCellVoltage'] = round(MaxChrgCellVoltage,3)
-            bus['/Ess/ConsumptionInputL1'] = round(ConsumptionInputL1,1)
-            bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1)
-            bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1)
+            bus['/Ess/ConsumptionInputL1'] = round(ConsumptionInputL1,1) if ConsumptionInputL1 is not None else -1  
+            bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1) if ConsumptionInputL2 is not None else -1 
+            bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1) if ConsumptionInputL3 is not None else -1 
             bus['/Ess/ConsumptionInput'] = round(ConsumptionInput,1)
 
             # this does not control the charger, is only displayed in GUI
