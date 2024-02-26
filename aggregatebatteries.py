@@ -779,9 +779,9 @@ class DbusAggBatService(object):
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
-        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L1/Power')
-        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L3/Power')
-        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L4/Power')
+        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L1/Power')
+        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L2/Power')
+        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Ac/ConsumptionOnInput/L3/Power')
         ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
 
         BatteryPower = Power
