@@ -122,9 +122,9 @@ class DbusMon:
             'com.victronenergy.system': {
             '/SystemState/LowSoc': dummy,
             '/SystemState/BatteryLife': dummy,
-            'Ac/ConsumptionOnInput/L1/Power': dummy,
-            'Ac/ConsumptionOnInput/L2/Power': dummy,
-            'Ac/ConsumptionOnInput/L3/Power': dummy},
+            '/Ac/ConsumptionOnInput/L1/Power': dummy,
+            '/Ac/ConsumptionOnInput/L2/Power': dummy,
+            '/Ac/ConsumptionOnInput/L3/Power': dummy},
             
             'com.victronenergy.grid': {
             '/Ac/Power': dummy,
