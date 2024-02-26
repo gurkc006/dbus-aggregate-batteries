@@ -782,7 +782,7 @@ class DbusAggBatService(object):
         ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L1/Power')
         ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L2/Power')
         ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L3/Power')
-        #ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
+        ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
 
         BatteryPower = Power
         BatteryCurrent = Current
