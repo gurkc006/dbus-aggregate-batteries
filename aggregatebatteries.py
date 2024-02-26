@@ -32,6 +32,13 @@ from threading import Thread
 sys.path.append('/opt/victronenergy/dbus-systemcalc-py/ext/velib_python')
 from vedbus import VeDbusService
 
+#class DbusVariable(object):
+#
+#    def __init__(self, service):
+#        self._path: str = ''
+#        self._dbusservice: VeDbusService = service._dbusservice
+#        self._add_params: list = {}
+
 class DbusAggBatService(object):
     
     def __init__(self, servicename='com.victronenergy.battery.aggregate'):
@@ -164,6 +171,10 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f}W".format(x))
         self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}V".format(x))
         self._dbusservice.add_path('/Ess/SmoothFilter', self._SmoothFilter, writeable=True, onchangecallback=self._onDbusUpdate)
+        self._dbusservice.add_path('/Ess/ConsumptionInputL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInputL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInputL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInput', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -179,6 +190,7 @@ class DbusAggBatService(object):
     def _startMonitor(self):
         logging.info('%s: Starting battery monitor.' % (dt.now()).strftime('%c'))
         self._dbusMon = DbusMon()
+
 
     #####################################################################
     #####################################################################
@@ -482,6 +494,11 @@ class DbusAggBatService(object):
         BatteryCurrentCalc = 0
         MaxChrgCellVoltage = 0
 
+        ConsumptionInputL1 = 0
+        ConsumptionInputL2 = 0
+        ConsumptionInputL3 = 0
+        ConsumptionInput = 0
+
         ####################################################
         # Get DBus values from all SerialBattery instances #
         ####################################################
@@ -762,6 +779,10 @@ class DbusAggBatService(object):
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
+        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L1/Power')
+        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L3/Power')
+        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', 'Ac/ConsumptionOnInput/L4/Power')
+        ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
 
         BatteryPower = Power
         BatteryCurrent = Current
@@ -909,7 +930,11 @@ class DbusAggBatService(object):
             bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
             bus['/Ess/GridP'] = round(GridPower,0)    
             bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
-            bus['/Ess/MaxChrgCellVoltage'] = round(MaxChrgCellVoltage,3)    
+            bus['/Ess/MaxChrgCellVoltage'] = round(MaxChrgCellVoltage,3)
+            bus['/Ess/ConsumptionInputL1'] = round(ConsumptionInputL1,1)
+            bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1)
+            bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1)
+            bus['/Ess/ConsumptionInput'] = round(ConsumptionInput,1)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
