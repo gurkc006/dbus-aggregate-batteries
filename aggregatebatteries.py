@@ -175,6 +175,10 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/ConsumptionInputL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/ConsumptionInputL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/ConsumptionInput', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGrid', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -499,6 +503,11 @@ class DbusAggBatService(object):
         ConsumptionInputL3 = 0
         ConsumptionInput = 0
 
+        PvOnGridL1 = 0
+        PvOnGridL2 = 0
+        PvOnGridL3 = 0
+        PvOnGrid = 0
+
         ####################################################
         # Get DBus values from all SerialBattery instances #
         ####################################################
@@ -783,6 +792,10 @@ class DbusAggBatService(object):
         ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L2/Power')
         ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L3/Power')
         ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
+        PvOnGridL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L1/Power')
+        PvOnGridL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L2/Power')
+        PvOnGridL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L3/Power')
+        PvOnGrid = PvOnGridL1 + PvOnGridL2 + PvOnGridL3
 
         BatteryPower = Power
         BatteryCurrent = Current
@@ -935,6 +948,10 @@ class DbusAggBatService(object):
             bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1) if ConsumptionInputL2 is not None else -1 
             bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1) if ConsumptionInputL3 is not None else -1 
             bus['/Ess/ConsumptionInput'] = round(ConsumptionInput,1)
+            bus['/Ess/PvOnGridL1'] = round(ConsumptionInputL1,1) if PvOnGridL1 is not None else -1  
+            bus['/Ess/PvOnGridL2'] = round(ConsumptionInputL2,1) if PvOnGridL2 is not None else -1 
+            bus['/Ess/PvOnGridL3'] = round(ConsumptionInputL3,1) if PvOnGridL3 is not None else -1 
+            bus['/Ess/PvOnGrid'] = round(ConsumptionInput,1)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
