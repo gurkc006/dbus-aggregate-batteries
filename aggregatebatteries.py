@@ -63,7 +63,7 @@ class DbusAggBatService(object):
         self._dynamicCVL = False                # set if the CVL needs to be reduced due to peaking            
         self._logTimer = 0                      # measure logging period in seconds
         self._EssActive = 0
-        self._SmoothFilter = 0
+        self._SmoothFilter = 15
         self._MaxChargeCurrentSm = 0
         
         # read initial charge from text file
@@ -804,12 +804,18 @@ class DbusAggBatService(object):
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
         self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
+        ASP1 = 0
+        ASP2 = 0
 
         if (self._EssActive > 0):
+            ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth
+            ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
             if (self._EssActive == 1):
-                AcPowerSetpoint = AcOutPower - MpptPower + MaxChargePowerSmooth
+                AcPowerSetpoint = ASP1
             elif (self._EssActive == 2):
-                AcPowerSetpoint = GridSetpoint + PvOnGrid - ConsumptionInput
+                AcPowerSetpoint = ASP2
+            elif (self._EssActive == 3):
+                AcPowerSetpoint = min(ASP1,ASP2)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
