@@ -948,10 +948,10 @@ class DbusAggBatService(object):
             bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1) if ConsumptionInputL2 is not None else -1 
             bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1) if ConsumptionInputL3 is not None else -1 
             bus['/Ess/ConsumptionInput'] = round(ConsumptionInput,1)
-            bus['/Ess/PvOnGridL1'] = round(ConsumptionInputL1,1) if PvOnGridL1 is not None else -1  
-            bus['/Ess/PvOnGridL2'] = round(ConsumptionInputL2,1) if PvOnGridL2 is not None else -1 
-            bus['/Ess/PvOnGridL3'] = round(ConsumptionInputL3,1) if PvOnGridL3 is not None else -1 
-            bus['/Ess/PvOnGrid'] = round(ConsumptionInput,1)
+            bus['/Ess/PvOnGridL1'] = round(PvOnGridL1,1) if PvOnGridL1 is not None else -1  
+            bus['/Ess/PvOnGridL2'] = round(PvOnGridL2,1) if PvOnGridL2 is not None else -1 
+            bus['/Ess/PvOnGridL3'] = round(PvOnGridL3,1) if PvOnGridL3 is not None else -1 
+            bus['/Ess/PvOnGrid'] = round(PvOnGrid,1)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
