@@ -494,6 +494,9 @@ class DbusAggBatService(object):
 
         GridSetpoint = 0
         GridPower = 0
+        GridL1 = 0
+        GridL2 = 0
+        GridL3 = 0
         AcPowerSetpoint = 0
         BatteryCurrentCalc = 0
         MaxChrgCellVoltage = 0
@@ -507,6 +510,11 @@ class DbusAggBatService(object):
         PvOnGridL2 = 0
         PvOnGridL3 = 0
         PvOnGrid = 0
+
+        AcLoadL1 = 0
+        AcLoadL2 = 0
+        AcLoadL3 = 0
+        AcLoad = 0
 
         ####################################################
         # Get DBus values from all SerialBattery instances #
@@ -578,7 +586,7 @@ class DbusAggBatService(object):
                 
                 if OWN_CHARGE_PARAMETERS:    # calculate reduction of charge voltage as sum of overvoltages of all cells
                     step = 'Calculate CVL reduction'
-                    cellOvervoltage = 0
+                   + cellOvervoltage = 0
                     for j in range (NR_OF_CELLS_PER_BATTERY):   # Marvo2011
                         cellVoltage = self._dbusMon.dbusmon.get_value(self._batteries_dict[i], '/Voltages/Cell%d' % (j+1))
                         if (cellVoltage > MAX_CELL_VOLTAGE):
@@ -787,15 +795,26 @@ class DbusAggBatService(object):
         InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Inverter/P')
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
+
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
+        GridL1 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L1/Power')
+        GridL2 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L2/Power')
+        GridL3 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L3/Power')
+
         ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L1/Power')
         ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L2/Power')
         ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L3/Power')
         ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
+
         PvOnGridL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L1/Power')
         PvOnGridL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L2/Power')
         PvOnGridL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L3/Power')
         PvOnGrid = PvOnGridL1 + PvOnGridL2 + PvOnGridL3
+
+        AcLoadL1 = GridL1 + PvOnGridL1 - AcInPower
+        AcLoadL2 = GridL2 + PvOnGridL2
+        AcLoadL3 = GridL3 + PvOnGridL3
+        AcLoad = AcLoad1 + AcLoadL2 + AcLoadL3
 
         BatteryPower = Power
         BatteryCurrent = Current
@@ -958,6 +977,10 @@ class DbusAggBatService(object):
             bus['/Ess/PvOnGridL2'] = round(PvOnGridL2,1) if PvOnGridL2 is not None else -1 
             bus['/Ess/PvOnGridL3'] = round(PvOnGridL3,1) if PvOnGridL3 is not None else -1 
             bus['/Ess/PvOnGrid'] = round(PvOnGrid,1)
+            bus['/Ess/AcLoadL1'] = round(AcLoadL1,1) if AcLoadL1 is not None else -1  
+            bus['/Ess/AcLoadL2'] = round(AcLoadL2,1) if AcLoadL2 is not None else -1 
+            bus['/Ess/AcLoadL3'] = round(AcLoadL3,1) if AcLoadL3 is not None else -1 
+            bus['/Ess/AcLoad'] = round(AcLoad,1)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
