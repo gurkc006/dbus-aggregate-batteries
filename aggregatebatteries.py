@@ -212,10 +212,7 @@ class DbusAggBatService(object):
             if value == 0:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
                 logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-            elif value == 1:
-                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
-                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
-            elif value == 2:
+            elif value > 0 and value <=4:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
@@ -826,18 +823,20 @@ class DbusAggBatService(object):
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
         self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
-        ASP1 = 0
-        ASP2 = 0
+
+        ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth
+        ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
+        ASP2 = GridSetpoint + PvOnGrid - AcLoad
 
         if (self._EssActive > 0):
-            ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth
-            ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
             if (self._EssActive == 1):
                 AcPowerSetpoint = ASP1
             elif (self._EssActive == 2):
                 AcPowerSetpoint = ASP2
             elif (self._EssActive == 3):
                 AcPowerSetpoint = min(ASP1,ASP2)
+            elif (self._EssActive == 4):
+                AcPowerSetpoint = min(ASP1,ASP3)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
