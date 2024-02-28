@@ -131,9 +131,9 @@ class DbusMon:
             
             'com.victronenergy.grid': {
             '/Ac/Power': dummy,
+            '/Ac/L1/Power': dummy,
             '/Ac/L2/Power': dummy,
             '/Ac/L3/Power': dummy,
-            '/Ac/L4/Power': dummy,
             '/ProductName': dummy},
 
             }
