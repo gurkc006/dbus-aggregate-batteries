@@ -179,7 +179,10 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/PvOnGridL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/PvOnGridL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/PvOnGrid', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
-
+        self._dbusservice.add_path('/Ess/AcLoadL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoadL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoadL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoad', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         x = Thread(target = self._startMonitor)
         x.start()   
 
