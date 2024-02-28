@@ -828,7 +828,7 @@ class DbusAggBatService(object):
 
         ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
         ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
-        ASP2 = GridSetpoint + PvOnGrid - AcLoad
+        ASP3 = GridSetpoint + PvOnGrid - AcLoad
 
         if (self._EssActive > 0):
             if (self._EssActive == 1):
