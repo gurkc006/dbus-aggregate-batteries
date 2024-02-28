@@ -586,7 +586,7 @@ class DbusAggBatService(object):
                 
                 if OWN_CHARGE_PARAMETERS:    # calculate reduction of charge voltage as sum of overvoltages of all cells
                     step = 'Calculate CVL reduction'
-                   + cellOvervoltage = 0
+                    cellOvervoltage = 0
                     for j in range (NR_OF_CELLS_PER_BATTERY):   # Marvo2011
                         cellVoltage = self._dbusMon.dbusmon.get_value(self._batteries_dict[i], '/Voltages/Cell%d' % (j+1))
                         if (cellVoltage > MAX_CELL_VOLTAGE):
