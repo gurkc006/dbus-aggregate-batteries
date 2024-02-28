@@ -823,8 +823,10 @@ class DbusAggBatService(object):
         MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
         self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
+        CorrectionCurrent = BatteryCurrentCalc - BatteryCurrent
+        CorrectionPower = CorrectionCurrent * Voltage
 
-        ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth
+        ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
         ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
         ASP2 = GridSetpoint + PvOnGrid - AcLoad
 
