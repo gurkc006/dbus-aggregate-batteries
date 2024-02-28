@@ -814,7 +814,7 @@ class DbusAggBatService(object):
         AcLoadL1 = GridL1 + PvOnGridL1 - AcInPower
         AcLoadL2 = GridL2 + PvOnGridL2
         AcLoadL3 = GridL3 + PvOnGridL3
-        AcLoad = AcLoad1 + AcLoadL2 + AcLoadL3
+        AcLoad = AcLoadL1 + AcLoadL2 + AcLoadL3
 
         BatteryPower = Power
         BatteryCurrent = Current
