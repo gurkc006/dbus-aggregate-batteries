@@ -183,6 +183,8 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/AcLoadL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/AcLoadL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
         self._dbusservice.add_path('/Ess/AcLoad', None, writeable=False, gettextcallback=lambda a, x: "{:.1f}W".format(x))
+        self._dbusservice.add_path('/Ess/CorrectionI', None, writeable=False, gettextcallback=lambda a, x: "{:.3f}A".format(x))
+
         x = Thread(target = self._startMonitor)
         x.start()   
 
@@ -988,6 +990,7 @@ class DbusAggBatService(object):
             bus['/Ess/AcLoadL2'] = round(AcLoadL2,1) if AcLoadL2 is not None else -1 
             bus['/Ess/AcLoadL3'] = round(AcLoadL3,1) if AcLoadL3 is not None else -1 
             bus['/Ess/AcLoad'] = round(AcLoad,1)
+            bus['/Ess/CorrectionI'] = round(CorrectionCurrent,3)
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
