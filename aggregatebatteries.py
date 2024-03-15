@@ -214,7 +214,7 @@ class DbusAggBatService(object):
             if value == 0:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
                 logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-            elif value > 0 and value <=4:
+            elif value > 0 and value <=5:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
@@ -792,10 +792,13 @@ class DbusAggBatService(object):
 
         AcInPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/In/P')
         AcInCurrent = AcInPower / 230 if AcInPower is not None else 0
+        
         AcOutPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Out/P')
         AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
+
         InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Inverter/P')
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
+        
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')#
 
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
@@ -828,12 +831,16 @@ class DbusAggBatService(object):
         else:
             self._MaxChargeCurrentSm = MaxChargeCurrent #((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
         MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
+        
         CorrectionCurrent = BatteryCurrentCalc - BatteryCurrent
         CorrectionPower = CorrectionCurrent * Voltage
 
         ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
+
         ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
-        ASP3 = GridSetpoint + PvOnGrid - AcLoad
+        # mode=4:  # 
+        ASP4 = GridSetpoint + PvOnGrid - AcLoad
+        # mode=5: #
 
         if (self._EssActive > 0):
             if (self._EssActive == 1):
@@ -843,7 +850,12 @@ class DbusAggBatService(object):
             elif (self._EssActive == 3):
                 AcPowerSetpoint = min(ASP1,ASP2)
             elif (self._EssActive == 4):
-                AcPowerSetpoint = min(ASP1,ASP3)
+                AcPowerSetpoint = min(ASP1,ASP4)
+            elif (self._EssActive == 5):
+                ASP1 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
+                ASP5 = GridSetpoint + PvOnGrid - AcLoad
+                AcPowerSetpoint = min(ASP5,ASP1)
+                logging.info(' %.1f %.1f ' % (ASP5, ASP1))
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
