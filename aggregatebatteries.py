@@ -211,10 +211,10 @@ class DbusAggBatService(object):
         if path == '/Ess/Active':
             self._EssActive = value
             logging.info('%s: Ess/Active manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-            if value == 0:
+            if self._EssActive == 0:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
                 logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-            elif value > 0 and value <=6:
+            elif self._EssActive > 0 and self._EssActive <=6:
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
