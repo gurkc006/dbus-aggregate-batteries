@@ -855,7 +855,6 @@ class DbusAggBatService(object):
                 ASP1 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
                 ASP5 = GridSetpoint + PvOnGrid - AcLoad
                 AcPowerSetpoint = min(ASP5,ASP1)
-                logging.info(' %.1f %.1f ' % (ASP5, ASP1))
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
