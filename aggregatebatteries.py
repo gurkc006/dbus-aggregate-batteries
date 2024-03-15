@@ -209,16 +209,17 @@ class DbusAggBatService(object):
 
     def _onDbusUpdate(self, path, value):
         if path == '/Ess/Active':
-            self._EssActive = value
-            logging.info('%s: Ess/Active manually set to %d' % ((dt.now()).strftime('%c'), self._EssActive))
-            if self._EssActive == 0:
+            logging.info('%s: Ess/Active manually set to %d' % ((dt.now()).strftime('%c'), value))
+            if value == 0:
+                self._EssActive = value
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
                 logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-            elif self._EssActive > 0 and self._EssActive <=6:
+            elif value > 0 and value <=5:
+                self._EssActive = value
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
-                logging.info('%s: wrong value!' % ((dt.now()).strftime('%c')))
+                logging.info('%s: wrong value! Reset to old value!' % ((dt.now()).strftime('%c')))
         elif path == '/Ess/SmoothFilter':
             self._SmoothFilter = value
             logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), self._SmoothFilter))
