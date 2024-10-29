@@ -117,7 +117,8 @@ class DbusMon:
             'com.victronenergy.settings': {
             '/Settings/CGwacs/OvervoltageFeedIn': dummy,
             '/Settings/CGwacs/Hub4Mode': dummy,
-            '/Settings/CGwacs/AcPowerSetPoint': dummy},
+            '/Settings/CGwacs/AcPowerSetPoint': dummy,
+            '/Settings/CGwacs/BatteryLife/MinimumSocLimit': dummy},
 
             'com.victronenergy.system': {
             '/SystemState/LowSoc': dummy,
