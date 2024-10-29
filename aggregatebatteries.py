@@ -1007,7 +1007,7 @@ class DbusAggBatService(object):
             bus['/Ess/AcLoadL3'] = round(AcLoadL3,1) if AcLoadL3 is not None else -1 
             bus['/Ess/AcLoad'] = round(AcLoad,1)
             bus['/Ess/CorrectionI'] = round(CorrectionCurrent,3)
-            bus['/Ess/MinimumSocLimit'] = round(MinimumSocLimit,0)
+            bus['/Ess/MinimumSocLimit'] = MinimumSocLimit
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
