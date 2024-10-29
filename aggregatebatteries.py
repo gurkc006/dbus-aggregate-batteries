@@ -840,13 +840,29 @@ class DbusAggBatService(object):
         CorrectionCurrent = BatteryCurrentCalc - BatteryCurrent
         CorrectionPower = CorrectionCurrent * Voltage
 
+        ###############################################################################
+        # ESS magic
+        #
+        # Calculation of AcPowerSetpoint
+        # positive AcPowerSetpoint means MP2 is consuming power from the AC input side
+        # negative AcPowerSetpoint means MP2 is sourcing power to the AC input side
+        ###############################################################################
+        
+        # ASP1: compensate AC out power and charge battery with grid and MPPTs using maximum charge power
         ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
-
+        
+        # ASP2: maintain gridsetpoint using PvOnGrid and battery (?)
         ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
-        # mode=4:  # 
+        
+        # APS4: maintain gridsepoint and charge battery using PvOnGrid and MPPTs  
         ASP4 = GridSetpoint + PvOnGrid - AcLoad
-        # mode=5: #
+        
+        # ASP5: maintain gridsepoint and charge battery using MPPTs only
+        ASP5 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
 
+        # ASP_noDischarge: prohibit battery discharge
+        ASP_noDischarge = AcOutPower
+        
         if (self._EssActive > 0):
             if (self._EssActive == 1):
                 AcPowerSetpoint = ASP1
@@ -856,10 +872,12 @@ class DbusAggBatService(object):
                 AcPowerSetpoint = min(ASP1,ASP2)
             elif (self._EssActive == 4):
                 AcPowerSetpoint = min(ASP1,ASP4)
+                if (Soc < MinimumSocLimit):
+                        ACPowerSetpoint = min(AcPowerSetpoint,ASP_noDischarge)
             elif (self._EssActive == 5):
-                ASP1 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
-                ASP5 = GridSetpoint + PvOnGrid - AcLoad
-                AcPowerSetpoint = min(ASP5,ASP1)
+                AcPowerSetpoint = min(ASP5,ASP4)
+                if (Soc < MinimumSocLimit):
+                        ACPowerSetpoint = min(AcPowerSetpoint,ASP_noDischarge)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
@@ -887,7 +905,7 @@ class DbusAggBatService(object):
         # overwrite BMS charge values
         if OWN_SOC:
             Capacity = self._ownCharge
-            Soc = 100* self._ownCharge / InstalledCapacity
+            Soc = 100 * self._ownCharge / InstalledCapacity
             ConsumedAmphours = InstalledCapacity - self._ownCharge
             if (self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/SystemState/LowSoc') == 0) and (Current < 0):
                 TimeToGo = -3600 * self._ownCharge / Current
