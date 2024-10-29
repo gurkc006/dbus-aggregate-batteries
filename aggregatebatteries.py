@@ -804,7 +804,7 @@ class DbusAggBatService(object):
         InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
         
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
-        MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings.CGwacs/MinimumSocLimit')
+        MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/BatteryLife/MinimumSocLimit')
 
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
         GridL1 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L1/Power')
