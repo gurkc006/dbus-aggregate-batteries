@@ -871,13 +871,13 @@ class DbusAggBatService(object):
             elif (self._EssActive == 3):
                 AcPowerSetpoint = min(ASP1,ASP2)
             elif (self._EssActive == 4):
-                #AcPowerSetpoint = min(ASP1,ASP4)
-                #if (Soc < MinimumSocLimit):
-                ACPowerSetpoint = ASP_noDischarge
+                AcPowerSetpoint = min(ASP1,ASP4)
+                if (Soc < MinimumSocLimit):
+                    AcPowerSetpoint = ASP_noDischarge
             elif (self._EssActive == 5):
                 AcPowerSetpoint = min(ASP5,ASP4)
                 if (Soc < MinimumSocLimit):
-                    ACPowerSetpoint = ASP_noDischarge
+                    AcPowerSetpoint = ASP_noDischarge
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
