@@ -63,7 +63,7 @@ class DbusAggBatService(object):
         self._dynamicCVL = False                # set if the CVL needs to be reduced due to peaking            
         self._logTimer = 0                      # measure logging period in seconds
         self._EssActive = 0
-        self._SmoothFilter = 250
+        self._SmoothFilter = 251
         self._MaxChargeCurrentSm = 0
         
         # read initial charge from text file
