@@ -848,36 +848,36 @@ class DbusAggBatService(object):
         # negative AcPowerSetpoint means MP2 is sourcing power to the AC input side
         ###############################################################################
         
-        # ASP1: compensate AC out power and charge battery with grid and MPPTs using maximum charge power
-        ASP1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
+        # APSp1: compensate AC out power and charge battery with grid and MPPTs using maximum charge power
+        APSp1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
         
-        # ASP2: maintain gridsetpoint using PvOnGrid and battery (?)
-        ASP2 = GridSetpoint + PvOnGrid - ConsumptionInput
+        # APSp2: maintain gridsetpoint using PvOnGrid and battery (?)
+        APSp2 = GridSetpoint + PvOnGrid - ConsumptionInput
         
-        # APS4: maintain gridsepoint and charge battery using PvOnGrid and MPPTs  
-        ASP4 = GridSetpoint + PvOnGrid - AcLoad
+        # APSp4: maintain gridsepoint and charge battery using PvOnGrid and MPPTs  
+        APSp4 = GridSetpoint + PvOnGrid - AcLoad
         
-        # ASP5: maintain gridsepoint and charge battery using MPPTs only
-        ASP5 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
+        # APSp5: maintain gridsepoint and charge battery using MPPTs only
+        APSp5 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
 
-        # ASP_noDischarge: prohibit battery discharge
-        ASP_noDischarge = AcOutPower
+        # APSp_noDischarge: prohibit battery discharge
+        APSp_noDischarge = AcOutPower
         
         if (self._EssActive > 0):
             if (self._EssActive == 1):
-                AcPowerSetpoint = ASP1
+                AcPowerSetpoint = APSp1
             elif (self._EssActive == 2):
-                AcPowerSetpoint = ASP2
+                AcPowerSetpoint = APSp2
             elif (self._EssActive == 3):
-                AcPowerSetpoint = min(ASP1,ASP2)
+                AcPowerSetpoint = min(APSp1,APSp2)
             elif (self._EssActive == 4):
-                AcPowerSetpoint = min(ASP1,ASP4)
+                AcPowerSetpoint = min(APSp1,APSp4)
                 if (Soc < MinimumSocLimit):
-                    AcPowerSetpoint = ASP_noDischarge
+                    AcPowerSetpoint = APSp_noDischarge
             elif (self._EssActive == 5):
-                AcPowerSetpoint = min(ASP5,ASP4)
+                AcPowerSetpoint = min(APSp5,APSp4)
                 if (Soc < MinimumSocLimit):
-                    AcPowerSetpoint = ASP_noDischarge
+                    AcPowerSetpoint = APSp_noDischarge
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
