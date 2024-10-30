@@ -791,6 +791,43 @@ class DbusAggBatService(object):
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
 
         ###########################################################
+        # own Coulomb counter (runs even the BMS values are used) #
+        ###########################################################
+        
+        deltaTime = tt.time() - self._timeOld         
+        self._timeOld = tt.time()
+        if Current > 0:
+            self._ownCharge += Current * (deltaTime / 3600) * BATTERY_EFFICIENCY                # charging (with efficiency)
+        else:    
+            self._ownCharge += Current * (deltaTime / 3600)                                     # discharging
+        self._ownCharge = max(self._ownCharge, 0) 
+        self._ownCharge = min(self._ownCharge, InstalledCapacity)
+        
+        # store the charge into text file if changed significantly (avoid frequent file access)
+        if abs(self._ownCharge - self._ownCharge_old) >= (CHARGE_SAVE_PRECISION * InstalledCapacity):
+            self._charge_file = open('/data/dbus-aggregate-batteries/charge', 'w')
+            self._charge_file.write('%.3f' % self._ownCharge)
+            self._charge_file.close()
+            self._ownCharge_old = self._ownCharge
+   
+        # overwrite BMS charge values
+        if OWN_SOC:
+            Capacity = self._ownCharge
+            Soc = 100 * self._ownCharge / InstalledCapacity
+            ConsumedAmphours = InstalledCapacity - self._ownCharge
+            if (self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/SystemState/LowSoc') == 0) and (Current < 0):
+                TimeToGo = -3600 * self._ownCharge / Current
+            else: 
+                TimeToGo = None
+        else:
+            Soc = Soc / Capacity                                                            # weighted sum
+            if TimeToGo != None:
+                TimeToGo = TimeToGo / Capacity                                              # weighted sum
+        
+
+
+
+        ###########################################################
         # my ESS test code here #
         ###########################################################
 
@@ -882,40 +919,8 @@ class DbusAggBatService(object):
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
 
-        ###########################################################
-        # own Coulomb counter (runs even the BMS values are used) #
-        ###########################################################
-        
-        deltaTime = tt.time() - self._timeOld         
-        self._timeOld = tt.time()
-        if Current > 0:
-            self._ownCharge += Current * (deltaTime / 3600) * BATTERY_EFFICIENCY                # charging (with efficiency)
-        else:    
-            self._ownCharge += Current * (deltaTime / 3600)                                     # discharging
-        self._ownCharge = max(self._ownCharge, 0) 
-        self._ownCharge = min(self._ownCharge, InstalledCapacity)
-        
-        # store the charge into text file if changed significantly (avoid frequent file access)
-        if abs(self._ownCharge - self._ownCharge_old) >= (CHARGE_SAVE_PRECISION * InstalledCapacity):
-            self._charge_file = open('/data/dbus-aggregate-batteries/charge', 'w')
-            self._charge_file.write('%.3f' % self._ownCharge)
-            self._charge_file.close()
-            self._ownCharge_old = self._ownCharge
-   
-        # overwrite BMS charge values
-        if OWN_SOC:
-            Capacity = self._ownCharge
-            Soc = 100 * self._ownCharge / InstalledCapacity
-            ConsumedAmphours = InstalledCapacity - self._ownCharge
-            if (self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/SystemState/LowSoc') == 0) and (Current < 0):
-                TimeToGo = -3600 * self._ownCharge / Current
-            else: 
-                TimeToGo = None
-        else:
-            Soc = Soc / Capacity                                                            # weighted sum
-            if TimeToGo != None:
-                TimeToGo = TimeToGo / Capacity                                              # weighted sum
-        
+
+
         #######################
         # Send values to DBus #
         #######################
