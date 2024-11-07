@@ -191,7 +191,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/CorrectionI', None, writeable=False, gettextcallback=lambda a, x: "{:.3f} A".format(x))
         self._dbusservice.add_path('/Ess/MinimumSocLimit', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} %".format(x))
 
-
+        # add settings #
         self.settings = SettingsDevice(
             bus=dbus.SessionBus()  if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus(),
             supportedSettings={
