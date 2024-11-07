@@ -193,8 +193,10 @@ class DbusAggBatService(object):
         self.settings = SettingsDevice(
             bus=dbus.SessionBus()  if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus(),
             supportedSettings={
-                'active': ['/Settings/MyEss/Active', 4, 0, 5],
-                'minsoc': ['/Settings/MyEss/MinSoc', 20, 0, 100],
+                'Active': ['/Settings/MyEss/Active', 4, 0, 5],
+                'MinSocLimit': ['/Settings/MyEss/MinSocLimit', 20, 0, 100],
+                'CorrectionI': ['/Settings/MyEss/CorrectionI', 0.419 -10.0, 10.0],
+                'SmoothFilter' : ['/Settings/MyEss/SmoothFilter', 250, 0, 1000],
                 },
             eventCallback=self._handle_changed_setting)
 
