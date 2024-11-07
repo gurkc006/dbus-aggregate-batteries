@@ -195,7 +195,7 @@ class DbusAggBatService(object):
             supportedSettings={
                 'Active': ['/Settings/MyEss/Active', 4, 0, 5],
                 'MinSocLimit': ['/Settings/MyEss/MinSocLimit', 20, 0, 100],
-                'CorrectionI': ['/Settings/MyEss/CorrectionI', 0.419 -10.0, 10.0],
+                'CorrectionI': ['/Settings/MyEss/CorrectionI', 0.419, -10.0, 10.0],
                 'SmoothFilter' : ['/Settings/MyEss/SmoothFilter', 250, 0, 1000],
                 },
             eventCallback=self._handle_changed_setting)
