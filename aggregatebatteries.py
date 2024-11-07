@@ -193,7 +193,8 @@ class DbusAggBatService(object):
         self.settings = SettingsDevice(
             bus=dbus.SessionBus()  if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus(),
             supportedSettings={
-                'active': ['/Settings/MyEss/Active', 4, 0, 0],
+                'active': ['/Settings/MyEss/Active', 4, 0, 5],
+                'minsoc': ['/Settings/MyEss/MinSoc', 20, 0, 100],
                 },
             eventCallback=self._handle_changed_setting)
 
@@ -248,7 +249,7 @@ class DbusAggBatService(object):
     #####################################################################
 
     def _handle_changed_setting(self, setting, oldvalue, newvalue):
-        logging.info('setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue))
+        logging.info('%s: setting changed, setting: %s, old: %s, new: %s' % ((dt.now()).strftime('%c'), setting, oldvalue, newvalue))
         return
 
 
