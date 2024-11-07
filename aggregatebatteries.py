@@ -68,6 +68,8 @@ class DbusAggBatService(object):
         self._EssActive = 0
         self._SmoothFilter = 250
         self._MaxChargeCurrentSm = 0
+        self._MinSocLimit = 0
+        self._CorrectionI = 0
         
         # read initial charge from text file
         try:
@@ -251,6 +253,14 @@ class DbusAggBatService(object):
     #####################################################################
 
     def _handle_changed_setting(self, setting, oldvalue, newvalue):
+        if setting == 'Active':
+            self._EssActive = newvalue
+        elif setting == 'CorrectionI':
+            self._CorrectionI = newvalue
+        elif setting == 'MinSocLimit':
+            self._MinSocLimit = newvalue
+        elif setting == 'SmoothFilter':
+            self._SmoothFilter = newvalue
         logging.info('%s: setting changed, setting: %s, old: %s, new: %s' % ((dt.now()).strftime('%c'), setting, oldvalue, newvalue))
         return
 
