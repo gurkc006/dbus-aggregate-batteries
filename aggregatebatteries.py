@@ -190,12 +190,12 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/MinimumSocLimit', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} %".format(x))
 
 
-        settings = SettingsDevice(
-            bus=dbus.SystemBus() if (platform.machine() == 'armv7l') else dbus.SessionBus(),
-            supportedSettings={
-                'active': ['/Settings/MyEss/Active', 4, 0, 0],
-                },
-            eventCallback=handle_changed_setting)
+        #settings = SettingsDevice(
+        #    bus=dbus.SystemBus() if (platform.machine() == 'armv7l') else dbus.SessionBus(),
+        #    supportedSettings={
+        #        'active': ['/Settings/MyEss/Active', 4, 0, 0],
+        #        },
+        #    eventCallback=handle_changed_setting)
 
         x = Thread(target = self._startMonitor)
         x.start()   
