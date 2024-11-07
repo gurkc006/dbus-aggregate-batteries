@@ -190,7 +190,7 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/MinimumSocLimit', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} %".format(x))
 
 
-        settings = SettingsDevice(
+        self.settings = SettingsDevice(
             bus=dbus.SessionBus()  if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus(),
             supportedSettings={
                 'active': ['/Settings/MyEss/Active', 4, 0, 0],
@@ -249,6 +249,7 @@ class DbusAggBatService(object):
 
     def _handle_changed_setting(self, setting, oldvalue, newvalue):
         logging.info('setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue))
+        return
 
 
     #####################################################################
