@@ -44,16 +44,6 @@ from settingsdevice import SettingsDevice  # available in the velib_python repos
 
 class DbusAggBatService(object):
     
-
-    #####################################################################
-    #####################################################################
-    ### local setting changed callback funtion                        ###
-    #####################################################################
-    #####################################################################
-
-    def _handle_changed_setting(setting, oldvalue, newvalue):
-        logging.info('setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue))
-        
     def __init__(self, servicename='com.victronenergy.battery.aggregate'):
         self._fn = Functions()
         self._batteries_dict = {}               # marvo2011
@@ -205,7 +195,7 @@ class DbusAggBatService(object):
             supportedSettings={
                 'active': ['/Settings/MyEss/Active', 4, 0, 0],
                 },
-            eventCallback=_handle_changed_setting)
+            eventCallback=self._handle_changed_setting)
 
         x = Thread(target = self._startMonitor)
         x.start()   
@@ -249,6 +239,17 @@ class DbusAggBatService(object):
             pass
         
         return True
+
+
+    #####################################################################
+    #####################################################################
+    ### local setting changed callback funtion                        ###
+    #####################################################################
+    #####################################################################
+
+    def _handle_changed_setting(setting, oldvalue, newvalue):
+        logging.info('setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue))
+
 
     #####################################################################
     #####################################################################
