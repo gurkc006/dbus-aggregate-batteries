@@ -247,7 +247,7 @@ class DbusAggBatService(object):
     #####################################################################
     #####################################################################
 
-    def _handle_changed_setting(setting, oldvalue, newvalue):
+    def _handle_changed_setting(self, setting, oldvalue, newvalue):
         logging.info('setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue))
 
 
