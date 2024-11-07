@@ -32,6 +32,9 @@ from threading import Thread
 sys.path.append('/opt/victronenergy/dbus-systemcalc-py/ext/velib_python')
 from vedbus import VeDbusService
 
+# localsettings: see also https://github.com/victronenergy/localsettings
+from settingsdevice import SettingsDevice  # available in the velib_python repository
+
 #class DbusVariable(object):
 #
 #    def __init__(self, service):
@@ -63,7 +66,7 @@ class DbusAggBatService(object):
         self._dynamicCVL = False                # set if the CVL needs to be reduced due to peaking            
         self._logTimer = 0                      # measure logging period in seconds
         self._EssActive = 0
-        self._SmoothFilter = 251
+        self._SmoothFilter = 250
         self._MaxChargeCurrentSm = 0
         
         # read initial charge from text file
@@ -186,6 +189,14 @@ class DbusAggBatService(object):
         self._dbusservice.add_path('/Ess/CorrectionI', None, writeable=False, gettextcallback=lambda a, x: "{:.3f} A".format(x))
         self._dbusservice.add_path('/Ess/MinimumSocLimit', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} %".format(x))
 
+
+        settings = SettingsDevice(
+            bus=dbus.SystemBus() if (platform.machine() == 'armv7l') else dbus.SessionBus(),
+            supportedSettings={
+                'active': ['/Settings/MyEss/Active', 4, 0, 0],
+                },
+            eventCallback=handle_changed_setting)
+
         x = Thread(target = self._startMonitor)
         x.start()   
 
@@ -228,6 +239,15 @@ class DbusAggBatService(object):
             pass
         
         return True
+
+    #####################################################################
+    #####################################################################
+    ### local setting changed callback funtion                        ###
+    #####################################################################
+    #####################################################################
+
+    def handle_changed_setting(setting, oldvalue, newvalue):
+        logging.info 'setting changed, setting: %s, old: %s, new: %s' % (setting, oldvalue, newvalue)
 
 
     #####################################################################

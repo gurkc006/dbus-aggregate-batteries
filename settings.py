@@ -86,5 +86,5 @@ KEEP_MAX_CVL = False
 #######################################
 
 SEND_CELL_VOLTAGES = 0                                 # 0: Disable Cell Info in dbus, 1: Format: /Cell/BatteryName_Cell<ID>
-LOGGING = 1                                            # 0: no logging, 1: print to console, 2: print to file
+LOGGING = 2                                            # 0: no logging, 1: print to console, 2: print to file
 LOG_PERIOD = 0                                         # in seconds; if 0, periodic logging is disabled
