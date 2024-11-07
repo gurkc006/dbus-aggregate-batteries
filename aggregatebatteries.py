@@ -224,25 +224,7 @@ class DbusAggBatService(object):
     #####################################################################
     #####################################################################
 
-    def _onDbusUpdate(self, path, value):
-        if path == '/Ess/Active':
-            logging.info('%s: Ess/Active manually set to %d' % ((dt.now()).strftime('%c'), value))
-            if value == 0:
-                self._EssActive = value
-                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
-                logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
-            elif value > 0 and value <=5:
-                self._EssActive = value
-                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
-                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
-            else:
-                logging.info('%s: wrong value! Reset to old value!' % ((dt.now()).strftime('%c')))
-        elif path == '/Ess/SmoothFilter':
-            self._SmoothFilter = value
-            logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), self._SmoothFilter))
-        else:
-            pass
-        
+    def _onDbusUpdate(self, path, value):        
         return True
 
 
@@ -254,13 +236,23 @@ class DbusAggBatService(object):
 
     def _handle_changed_setting(self, setting, oldvalue, newvalue):
         if setting == 'Active':
-            self._EssActive = newvalue
+            if newvalue == 0:
+                self._EssActive = newvalue
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
+                logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
+            elif newvalue > 0 and newvalue <=5:
+                self._EssActive = newvalue
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+            else:
+                logging.info('%s: wrong value! Reset to old value!' % ((dt.now()).strftime('%c')))
         elif setting == 'CorrectionI':
             self._CorrectionI = newvalue
         elif setting == 'MinSocLimit':
             self._MinSocLimit = newvalue
         elif setting == 'SmoothFilter':
             self._SmoothFilter = newvalue
+            logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), self._SmoothFilter))
         logging.info('%s: setting changed, setting: %s, old: %s, new: %s' % ((dt.now()).strftime('%c'), setting, oldvalue, newvalue))
         return
 
@@ -1066,6 +1058,7 @@ class DbusAggBatService(object):
             bus['/Ess/AcLoad'] = round(AcLoad,1)
             bus['/Ess/CorrectionI'] = round(CorrectionCurrent,3)
             bus['/Ess/MinimumSocLimit'] = MinimumSocLimit
+            bus['/Ess/Active'] = self._EssActive
 
             # this does not control the charger, is only displayed in GUI
             bus['/Io/AllowToCharge'] = AllowToCharge
