@@ -816,6 +816,9 @@ class DbusAggBatService(object):
                 MaxDischargeCurrent = 0
             else:
                 MaxDischargeCurrent = MAX_DISCHARGE_CURRENT * self._fn._interpolate(CELL_DISCHARGE_LIMITING_VOLTAGE, CELL_DISCHARGE_LIMITED_CURRENT, MinCellVoltage)      
+        else: # OWN_CHARGE_PARAMETERS = false!
+            if (VoltagesSum >= 0.99 * MaxChargeVoltage) and ((MaxCellVoltage - MinCellVoltage) < CELL_DIFF_MAX):   # if normal charging voltage is 100% SoC and balancing is finished
+                self._ownCharge = InstalledCapacity                                                 # reset Coulumb counter to 100%
 
         ###########################################################
         # own Coulomb counter (runs even the BMS values are used) #
@@ -827,6 +830,7 @@ class DbusAggBatService(object):
             self._ownCharge += Current * (deltaTime / 3600) * BATTERY_EFFICIENCY                # charging (with efficiency)
         else:    
             self._ownCharge += Current * (deltaTime / 3600)                                     # discharging
+        if 
         self._ownCharge = max(self._ownCharge, 0) 
         self._ownCharge = min(self._ownCharge, InstalledCapacity)
         
