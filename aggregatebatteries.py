@@ -830,7 +830,6 @@ class DbusAggBatService(object):
             self._ownCharge += Current * (deltaTime / 3600) * BATTERY_EFFICIENCY                # charging (with efficiency)
         else:    
             self._ownCharge += Current * (deltaTime / 3600)                                     # discharging
-        if 
         self._ownCharge = max(self._ownCharge, 0) 
         self._ownCharge = min(self._ownCharge, InstalledCapacity)
         
