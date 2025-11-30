@@ -157,6 +157,7 @@ class DbusMon:
                 '/Ac/L3/Power': dummy,
                 '/ProductName': dummy,
             },
+        }
 
         self.dbusmon = DbusMonitor(self.monitorlist, ignoreServices=["com.victronenergy.battery.aggregate"])
 
