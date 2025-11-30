@@ -794,11 +794,11 @@ class DbusAggBatService(object):
     # ############################################################
     
     def _find_grid(self):
-        logging.info("Searching Grid: Trial Nr. %d" % self._searchTrials)
+        logging.info("Searching Grid: Trial Nr. %s" % self._searchTrials)
         try:
-            logging.info('GRID_SERVICE_NAME=%s' % settings.GRID_SERVICE_NAME)
+            logging.info("GRID_SERVICE_NAME=%s" % settings.GRID_SERVICE_NAME)
             for service in self._dbusConn.list_names():
-                logging.info('> service=%s' % (service))
+                logging.info("> service=%s" % (service))
                 if settings.GRID_SERVICE_NAME in service:
                     self._grid = service
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
