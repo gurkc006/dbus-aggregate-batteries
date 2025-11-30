@@ -324,7 +324,7 @@ class DbusAggBatService(object):
                 'MinSocLimit': ['/Settings/MyEss/MinSocLimit', 20, 0, 100],
                 'CorrectionI': ['/Settings/MyEss/CorrectionI', 0.419, -10.0, 10.0],
                 'SmoothFilter' : ['/Settings/MyEss/SmoothFilter', 250, 0, 1000],
-                })
+                },eventCallback=self._handle_changed_setting)
         # Create ESS paths ###############################################################################################
 
         x = Thread(target=self._startMonitor)
@@ -351,6 +351,37 @@ class DbusAggBatService(object):
         logging.info("Starting dbusmonitor...")
         self._dbusMon = DbusMon()
         logging.info("dbusmonitor started")
+
+    
+    # ####################################################################
+    # ####################################################################
+    # ## local setting changed callback funtion                        ###
+    # ####################################################################
+    # ####################################################################
+
+    def _handle_changed_setting(self, setting, oldvalue, newvalue):
+        if setting == 'Active':
+            if newvalue == 0:
+                self._EssActive = newvalue
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
+                logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
+            elif newvalue > 0 and newvalue <=5:
+                self._EssActive = newvalue
+                self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+                logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
+            else:
+                logging.info('%s: wrong value! Reset to old value!' % ((dt.now()).strftime('%c')))
+        elif setting == 'CorrectionI':
+            self._CorrectionI = newvalue
+            logging.info('%s: /settings/myEss/CorrectionI manually set to %g' % ((dt.now()).strftime('%c'), self._CorrectionI))
+        elif setting == 'MinSocLimit':
+            self._MinSocLimit = newvalue
+            logging.info('%s: /settings/myEss/MinSocLimit manually set to %d' % ((dt.now()).strftime('%c'), self._MinSocLimit))
+        elif setting == 'SmoothFilter':
+            self._SmoothFilter = newvalue
+            logging.info('%s: /Ess/SmoothFilter manually set to %d' % ((dt.now()).strftime('%c'), self._SmoothFilter))
+        logging.info('%s: setting changed, setting: %s, old: %s, new: %s' % ((dt.now()).strftime('%c'), setting, oldvalue, newvalue))
+        return
 
     # ####################################################################
     # ####################################################################
