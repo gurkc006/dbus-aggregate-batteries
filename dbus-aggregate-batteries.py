@@ -793,10 +793,10 @@ class DbusAggBatService(object):
     # ############################################################
     
     def _find_grid(self):
-        logging.info("Searching GRID: Trial Nr. %d" % self._searchTrials)
+        logging.info("Searching Grid: Trial Nr. %d" % self._searchTrials)
         try:
             for service in self._dbusConn.list_names():
-                # logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
+                logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
                 if GRID_KEY_WORD in service:
                     self._grid = service
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
@@ -823,7 +823,7 @@ class DbusAggBatService(object):
             return True
         else:
             logging.error('%s: Grid meter not found. Exiting.' % (dt.now()).strftime('%c'))
-            t.sleep(settings.TIME_BEFORE_RESTART)
+            tt.sleep(settings.TIME_BEFORE_RESTART)
             sys.exit(1)
 
     # ############################################################
