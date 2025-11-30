@@ -1421,6 +1421,44 @@ class DbusAggBatService(object):
                 logging.error("BMS connection lost.")
             """
 
+                       # ess stuff ##########################################################
+            bus['/Ess/BatteryP'] = round(BatteryPower,0)
+            bus['/Ess/BatteryI'] = round(BatteryCurrent,0)
+            bus['/Ess/BatteryCalcI'] = round(BatteryCurrentCalc,2)
+            bus['/Ess/MpptP'] = round(MpptPower,0)
+            bus['/Ess/MpptI'] = round(MpptCurrent, 2)
+            bus['/Ess/AcInP'] = round(AcInPower,0) if AcInPower is not None else 0
+            bus['/Ess/AcInI'] = round(AcInCurrent,2) 
+            bus['/Ess/AcOutP'] = round(AcOutPower,0) if AcOutPower is not None else 0
+            bus['/Ess/AcOutI'] = round(AcOutCurrent,2)
+            bus['/Ess/InverterP'] = round(InverterPower,0) if InverterPower is not None else 0
+            bus['/Ess/InverterI'] = round(InverterCurrent,2)
+            bus['/Ess/MaxChargeP'] = round(MaxChargePower,0)
+            bus['/Ess/MaxChargeI'] = round(MaxChargeCurrent,2)
+            bus['/Ess/MaxChargeIsm'] = round(self._MaxChargeCurrentSm,2)
+            bus['/Ess/GridSetpoint'] = round(GridSetpoint,0) if GridSetpoint is not None else -1
+            bus['/Ess/GridP'] = round(GridPower,0)    
+            bus['/Ess/AcPowerSetpoint'] = round(AcPowerSetpoint,0) if AcPowerSetpoint is not None else -1  
+            bus['/Ess/MaxChrgCellVoltage'] = round(MaxChrgCellVoltage,3)
+            bus['/Ess/ConsumptionInputL1'] = round(ConsumptionInputL1,1) if ConsumptionInputL1 is not None else -1  
+            bus['/Ess/ConsumptionInputL2'] = round(ConsumptionInputL2,1) if ConsumptionInputL2 is not None else -1 
+            bus['/Ess/ConsumptionInputL3'] = round(ConsumptionInputL3,1) if ConsumptionInputL3 is not None else -1 
+            bus['/Ess/ConsumptionInput'] = round(ConsumptionInput,1)
+            bus['/Ess/PvOnGridL1'] = round(PvOnGridL1,1) if PvOnGridL1 is not None else -1  
+            bus['/Ess/PvOnGridL2'] = round(PvOnGridL2,1) if PvOnGridL2 is not None else -1 
+            bus['/Ess/PvOnGridL3'] = round(PvOnGridL3,1) if PvOnGridL3 is not None else -1 
+            bus['/Ess/PvOnGrid'] = round(PvOnGrid,1)
+            bus['/Ess/AcLoadL1'] = round(AcLoadL1,1) if AcLoadL1 is not None else -1  
+            bus['/Ess/AcLoadL2'] = round(AcLoadL2,1) if AcLoadL2 is not None else -1 
+            bus['/Ess/AcLoadL3'] = round(AcLoadL3,1) if AcLoadL3 is not None else -1 
+            bus['/Ess/AcLoad'] = round(AcLoad,1)
+            bus['/Ess/CorrectionI'] = round(CorrectionCurrent,3)
+            bus['/Ess/MinimumSocLimit'] = self._MinSocLimit
+            bus['/Ess/Active'] = self._EssActive
+            bus['/Ess/SmoothFilter'] = self._SmoothFilter
+            # ess stuff ##########################################################
+
+
             # this does not control the charger, is only displayed in GUI
             bus["/Io/AllowToCharge"] = AllowToCharge
             bus["/Io/AllowToDischarge"] = AllowToDischarge
