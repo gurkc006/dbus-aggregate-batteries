@@ -736,7 +736,7 @@ class DbusAggBatService(object):
         else:
             self._timeOld = tt.time()
             # if no MPPTs start the _update loop
-            GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
+            GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._find_grid)
 
         # all OK, stop calling this function
         return False
@@ -797,7 +797,7 @@ class DbusAggBatService(object):
         logging.info("Searching Grid: Trial Nr. %d" % self._searchTrials)
         try:
             for service in self._dbusConn.list_names():
-                logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
+                logging.info('> service=%s' % (service))
                 if settings.GRID_SERVICE_NAME in service:
                     self._grid = service
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
