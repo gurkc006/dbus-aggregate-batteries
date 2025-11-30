@@ -753,6 +753,7 @@ class DbusAggBatService(object):
         logging.info("Searching MPPT(s): Trial Nr. %d" % self._searchTrials)
         try:
             for service in self._dbusConn.list_names():
+                logging.info('%s: service=%s' % ((dt.now()).strftime('%c'),service))
                 if settings.MPPT_KEYWORD in service:
                     self._mppts_list.append(service)
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
@@ -797,7 +798,7 @@ class DbusAggBatService(object):
         try:
             for service in self._dbusConn.list_names():
                 logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
-                if GRID_KEY_WORD in service:
+                if settings.GRID_SERVICE_NAME in service:
                     self._grid = service
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
         except Exception:
