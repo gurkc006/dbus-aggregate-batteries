@@ -40,6 +40,8 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "ext"))
 
 from vedbus import VeDbusService  # noqa: E402
 
+from settingsdevice import SettingsDevice  # available in the velib_python repository
+
 VERSION = "4.0.20251023-beta"
 
 
