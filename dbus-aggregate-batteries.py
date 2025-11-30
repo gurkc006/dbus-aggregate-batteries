@@ -110,6 +110,15 @@ class DbusAggBatService(object):
         # last timestamp then the log was printed
         self._logLastPrintTimeStamp = 0
 
+        # ESS variables ###############################################################################
+        self._EssActive = 0
+        self._SmoothFilter = 250
+        self._MaxChargeCurrentSm = 0
+        self._MinSocLimit = 0
+        self._CorrectionI = 0
+        self._test = -1
+        # ESS variables ###############################################################################
+
         # read initial charge from text file
         try:
             self._charge_file = open("/data/apps/dbus-aggregate-batteries/storedvalue_charge", "r")  # read
@@ -269,6 +278,52 @@ class DbusAggBatService(object):
         self._dbusservice.add_path("/Io/AllowToCharge", None, writeable=True)
         self._dbusservice.add_path("/Io/AllowToDischarge", None, writeable=True)
         self._dbusservice.add_path("/Io/AllowToBalance", None, writeable=True)
+
+        # Create ESS paths ###############################################################################################
+        self._dbusservice.add_path('/Ess/Active', None, writeable=False, gettextcallback=lambda a, x: "{:d}".format(x))
+        self._dbusservice.add_path('/Ess/BatteryP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/BatteryI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/BatteryCalcI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/MpptP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/MpptI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/AcInP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcInI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/AcOutP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcOutI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/InverterP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/InverterI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeI', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/MaxChargeIsm', None, writeable=False, gettextcallback=lambda a, x: "{:.2f} A".format(x))
+        self._dbusservice.add_path('/Ess/GridSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/GridP', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcPowerSetpoint', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/MaxChrgCellVoltage', None, writeable=False, gettextcallback=lambda a, x: "{:.3f} V".format(x))
+        self._dbusservice.add_path('/Ess/SmoothFilter', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInputL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInputL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInputL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/ConsumptionInput', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGridL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/PvOnGrid', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoadL1', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoadL2', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoadL3', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/AcLoad', None, writeable=False, gettextcallback=lambda a, x: "{:.1f} W".format(x))
+        self._dbusservice.add_path('/Ess/CorrectionI', None, writeable=False, gettextcallback=lambda a, x: "{:.3f} A".format(x))
+        self._dbusservice.add_path('/Ess/MinimumSocLimit', None, writeable=False, gettextcallback=lambda a, x: "{:.0f} %".format(x))
+        # add ESS settings #
+        self.settings = SettingsDevice(
+            bus=dbus.SessionBus()  if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus(),
+            supportedSettings={
+                'Active': ['/Settings/MyEss/Active', 4, 0, 5],
+                'MinSocLimit': ['/Settings/MyEss/MinSocLimit', 20, 0, 100],
+                'CorrectionI': ['/Settings/MyEss/CorrectionI', 0.419, -10.0, 10.0],
+                'SmoothFilter' : ['/Settings/MyEss/SmoothFilter', 250, 0, 1000],
+                })
+        # Create ESS paths ###############################################################################################
 
         x = Thread(target=self._startMonitor)
         x.start()
