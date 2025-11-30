@@ -855,6 +855,52 @@ class DbusAggBatService(object):
         # Bulk, Absorption, Float, Keep always max voltage
         ChargeMode_list = []
 
+        # ESS variables #######################################################################
+        BatteryPower = 0
+        BatteryCurrent = 0
+        MpptCurrent = 0
+        MpptPower = 0
+        AcInPower = 0
+        AcInCurrent = 0
+        AcOutPower = 0
+        AcOutCurrent = 0
+        InverterPower = 0
+        InverterCurrent = 0
+
+        MaxChargePower = 0
+        MaxChargeCurrent = 0
+        MaxChargeVoltage = 0
+
+        MaxDischargePower = 0
+        MaxDischargeCurrent = 0
+
+        GridSetpoint = 0
+        GridPower = 0
+        GridL1 = 0
+        GridL2 = 0
+        GridL3 = 0
+        AcPowerSetpoint = 0
+        BatteryCurrentCalc = 0
+        MaxChrgCellVoltage = 0
+
+        ConsumptionInputL1 = 0
+        ConsumptionInputL2 = 0
+        ConsumptionInputL3 = 0
+        ConsumptionInput = 0
+
+        PvOnGridL1 = 0
+        PvOnGridL2 = 0
+        PvOnGridL3 = 0
+        PvOnGrid = 0
+
+        AcLoadL1 = 0
+        AcLoadL2 = 0
+        AcLoadL3 = 0
+        AcLoad = 0
+
+        MinimumSocLimit = 0
+        ######################################################################
+
         ####################################################
         # Get DBus values from all SerialBattery instances #
         ####################################################
