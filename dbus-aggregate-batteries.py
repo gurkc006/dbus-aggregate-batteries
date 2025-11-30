@@ -753,7 +753,6 @@ class DbusAggBatService(object):
         logging.info("Searching MPPT(s): Trial Nr. %d" % self._searchTrials)
         try:
             for service in self._dbusConn.list_names():
-                logging.info('%s: service=%s' % ((dt.now()).strftime('%c'),service))
                 if settings.MPPT_KEYWORD in service:
                     self._mppts_list.append(service)
                     logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
@@ -835,13 +834,15 @@ class DbusAggBatService(object):
     # ############################################################
 
     def _load_settings(self):
-        logging.info('***  Load settings from dbus ... ***')
+        logging.info('Load settings from dbus:')
         self._EssActive = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/Active',)
-        logging.info('%s: /settings/myEss/Active loaded = %g' % ((dt.now()).strftime('%c'), self._EssActive))
+        logging.info('|- /settings/myEss/Active loaded = %g' % self._EssActive)
         self._CorrectionI = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/CorrectionI')
+        logging.info('|- /settings/myEss/CorrectionI loaded = %g' % self._CorrectionI)
         self._MinSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/MinSocLimit')
+        logging.info('|- /settings/myEss/MinSocLimit loaded = %g' % self._MinSocLimit)       
         self._SmoothFilter = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/SmoothFilter')
-        logging.info('%s: /settings/myEss/SmoothFilter loaded = %g' % ((dt.now()).strftime('%c'), self._SmoothFilter))
+        logging.info('|- /settings/myEss/SmoothFilter loaded = %g' % self._SmoothFilter)
         self._timeOld = tt.time()
         GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
 
@@ -1503,6 +1504,49 @@ class DbusAggBatService(object):
         
         CorrectionCurrent = BatteryCurrentCalc - BatteryCurrent
         CorrectionPower = CorrectionCurrent * Voltage
+
+        ###############################################################################
+        # ESS magic
+        #
+        # Calculation of AcPowerSetpoint
+        # positive AcPowerSetpoint means MP2 is consuming power from the AC input side
+        # negative AcPowerSetpoint means MP2 is sourcing power to the AC input side
+        ###############################################################################
+        
+        # APSp1: compensate AC out power and charge battery with grid and MPPTs using maximum charge power
+        APSp1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
+        
+        # APSp2: maintain gridsetpoint using PvOnGrid and battery (?)
+        APSp2 = GridSetpoint + PvOnGrid - ConsumptionInput
+        
+        # APSp4: maintain gridsepoint and charge battery using PvOnGrid and MPPTs  
+        APSp4 = GridSetpoint + PvOnGrid - AcLoad
+        
+        # APSp5: maintain gridsepoint and charge battery using MPPTs only
+        APSp5 = AcOutPower - MpptPower + min(MpptPower,(MaxChargePowerSmooth + CorrectionPower)) 
+
+        # APSp_noDischarge: prohibit battery discharge
+        APSp_noDischarge = AcOutPower
+        
+        if (self._EssActive > 0):
+            if (self._EssActive == 1):
+                AcPowerSetpoint = APSp1
+            elif (self._EssActive == 2):
+                AcPowerSetpoint = APSp2
+            elif (self._EssActive == 3):
+                AcPowerSetpoint = min(APSp1,APSp2)
+            elif (self._EssActive == 4):  # winter?!
+                AcPowerSetpoint = min(APSp1,APSp4)
+                if (Soc < MinimumSocLimit):
+                    AcPowerSetpoint = APSp_noDischarge
+            elif (self._EssActive == 5): # summer
+                AcPowerSetpoint = min(APSp5,APSp4)
+                if (Soc < MinimumSocLimit):
+                    AcPowerSetpoint = APSp_noDischarge
+            self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
+        else:
+            AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
+
         # ### ESS code ################################################################################################
 
 
