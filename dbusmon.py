@@ -125,6 +125,9 @@ class DbusMon:
                 "/Connected": dummy,
                 "/Dc/0/Current": dummy,
                 "/ProductName": dummy,
+                "/Devices/0/Ac/In/P": dummy,
+                "/Devices/0/Ac/Out/P": dummy, 
+                "/Devices/0/Ac/Inverter/P": dummy,
             },
             "com.victronenergy.solarcharger": {
                 "/Dc/0/Current": dummy,

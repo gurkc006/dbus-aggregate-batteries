@@ -795,7 +795,7 @@ class DbusAggBatService(object):
     
     def _find_grid(self):
         logging.info("Searching Grid: Trial Nr. %s" % self._searchTrials)
-        logging.info("GRID_SERVICE_NAME = %s" % settings.GRID_SERVICE_NAME)
+        #logging.info("GRID_SERVICE_NAME = %s" % settings.GRID_SERVICE_NAME)
         try:
             for service in self._dbusConn.list_names():
                 #logging.info("> service = %s" % (service))
