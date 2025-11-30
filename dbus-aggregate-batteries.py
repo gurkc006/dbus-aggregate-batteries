@@ -772,7 +772,7 @@ class DbusAggBatService(object):
         logging.info("> %d MPPT(s) found." % (mpptsCount))
         if mpptsCount == settings.NR_OF_MPPTS:
             self._timeOld = tt.time()
-            GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
+            GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._find_grid)
             # all OK, stop calling this function
             return False
         elif self._searchTrials < settings.SEARCH_TRIALS:
