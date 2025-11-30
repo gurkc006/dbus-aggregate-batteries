@@ -130,12 +130,33 @@ class DbusMon:
                 "/Dc/0/Current": dummy,
                 "/ProductName": dummy,
             },
-            "com.victronenergy.settings": {"/Settings/CGwacs/OvervoltageFeedIn": dummy},
+            "com.victronenergy.settings": {
+                "/Settings/CGwacs/OvervoltageFeedIn": dummy,
+                '/Settings/CGwacs/Hub4Mode': dummy,
+                '/Settings/CGwacs/AcPowerSetPoint': dummy,
+                '/Settings/CGwacs/BatteryLife/MinimumSocLimit': dummy,
+                '/Settings/MyEss/Active': dummy,
+                '/Settings/MyEss/CorrectionI': dummy,
+                '/Settings/MyEss/MinSocLimit': dummy,
+                '/Settings/MyEss/SmoothFilter': dummy,
+            },
             "com.victronenergy.system": {
                 "/SystemState/LowSoc": dummy,
                 "/SystemState/BatteryLife": dummy,
+                '/Ac/ConsumptionOnInput/L1/Power': dummy,
+                '/Ac/ConsumptionOnInput/L2/Power': dummy,
+                '/Ac/ConsumptionOnInput/L3/Power': dummy,
+                '/Ac/PvOnGrid/L1/Power': dummy,
+                '/Ac/PvOnGrid/L2/Power': dummy,
+                '/Ac/PvOnGrid/L3/Power': dummy,
             },
-        }
+            'com.victronenergy.grid': {
+                '/Ac/Power': dummy,
+                '/Ac/L1/Power': dummy,
+                '/Ac/L2/Power': dummy,
+                '/Ac/L3/Power': dummy,
+                '/ProductName': dummy,
+            },
 
         self.dbusmon = DbusMonitor(self.monitorlist, ignoreServices=["com.victronenergy.battery.aggregate"])
 
