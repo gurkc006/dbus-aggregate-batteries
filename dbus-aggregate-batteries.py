@@ -1386,6 +1386,57 @@ class DbusAggBatService(object):
                 # weighted sum
                 TimeToGo = TimeToGo / InstalledCapacity
 
+        # ### ESS code ################################################################################################
+        AcInPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/In/P')
+        AcInCurrent = AcInPower / 230 if AcInPower is not None else 0
+        
+        AcOutPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Out/P')
+        AcOutCurrent = AcOutPower / 230 if AcOutPower is not None else 0
+
+        InverterPower = self._dbusMon.dbusmon.get_value(self._multi, '/Devices/0/Ac/Inverter/P')
+        InverterCurrent = InverterPower / Voltage if InverterPower is not None else 0
+        
+        GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
+        #MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/BatteryLife/MinimumSocLimit')
+        MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/myEss/MinSocLimit')
+
+        GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
+        GridL1 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L1/Power')
+        GridL2 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L2/Power')
+        GridL3 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L3/Power')
+
+        ConsumptionInputL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L1/Power')
+        ConsumptionInputL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L2/Power')
+        ConsumptionInputL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/ConsumptionOnInput/L3/Power')
+        ConsumptionInput = ConsumptionInputL1 + ConsumptionInputL2 + ConsumptionInputL3
+
+        PvOnGridL1 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L1/Power')
+        PvOnGridL2 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L2/Power')
+        PvOnGridL3 = self._dbusMon.dbusmon.get_value('com.victronenergy.system', '/Ac/PvOnGrid/L3/Power')
+        PvOnGrid = PvOnGridL1 + PvOnGridL2 + PvOnGridL3
+
+        AcLoadL1 = GridL1 + PvOnGridL1 - AcInPower
+        AcLoadL2 = GridL2 + PvOnGridL2
+        AcLoadL3 = GridL3 + PvOnGridL3
+        AcLoad = AcLoadL1 + AcLoadL2 + AcLoadL3
+
+        BatteryPower = Power
+        BatteryCurrent = Current
+        BatteryCurrentCalc = MpptCurrent + InverterCurrent
+        MaxChargePower = MaxChargeCurrent * Voltage
+        MaxDischargePower = MaxDischargeCurrent * Voltage
+        MaxChrgCellVoltage = MaxChargeVoltage / NR_OF_CELLS_PER_BATTERY
+        if MaxChargeCurrent > self._MaxChargeCurrentSm:
+            self._MaxChargeCurrentSm = ((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
+        else:
+            self._MaxChargeCurrentSm = MaxChargeCurrent #((self._SmoothFilter * self._MaxChargeCurrentSm) + MaxChargeCurrent) / (self._SmoothFilter + 1)
+        MaxChargePowerSmooth = self._MaxChargeCurrentSm * Voltage
+        
+        CorrectionCurrent = BatteryCurrentCalc - BatteryCurrent
+        CorrectionPower = CorrectionCurrent * Voltage
+        # ### ESS code ################################################################################################
+
+
         #######################
         # Send values to DBus #
         #######################
