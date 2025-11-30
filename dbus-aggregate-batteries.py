@@ -1192,7 +1192,11 @@ class DbusAggBatService(object):
 
                 for i in range(settings.NR_OF_MPPTS):
                     # add DC current of all MPPTs (if present)
-                    Current_VE += self._dbusMon.dbusmon.get_value(self._mppts_list[i], "/Dc/0/Current")
+#                    Current_VE += self._dbusMon.dbusmon.get_value(self._mppts_list[i], "/Dc/0/Current")
+                    MpptCurrent += self._dbusMon.dbusmon.get_value(self._mppts_list[i], '/Dc/0/Current')                             # add DC current of all MPPTs (if present)          
+                Current_VE += MpptCurrent
+                MpptPower = MpptCurrent * Voltage
+
 
             except Exception:
                 (
