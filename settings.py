@@ -174,7 +174,7 @@ def check_config_issue(condition: bool, message: str):
 
 # ----- Needed hardware settings -----
 NR_OF_BATTERIES: int = get_int_from_config("DEFAULT", "NR_OF_BATTERIES")
-if NR_OF_BATTERIES < 2:
+if NR_OF_BATTERIES < 1:
     errors_in_config.append("NR_OF_BATTERIES must be at least 2. Currently set to %d." % NR_OF_BATTERIES)
 
 NR_OF_CELLS_PER_BATTERY: int = get_int_from_config("DEFAULT", "NR_OF_CELLS_PER_BATTERY")
