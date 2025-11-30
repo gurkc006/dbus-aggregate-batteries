@@ -69,6 +69,9 @@ class DbusAggBatService(object):
         self._multi = None
         """ dbus service of MultiPlus/Quattro, if found """
 
+        self._grid = None
+        """ dbus service of grid """
+
         self._mppts_list = []
         """ list of dbus services of MPPTs, if found """
 
@@ -780,6 +783,66 @@ class DbusAggBatService(object):
             logging.error("Required number of MPPTs not found. Exiting...")
             tt.sleep(settings.TIME_BEFORE_RESTART)
             sys.exit(1)
+
+
+
+    # ############################################################
+    # ############################################################
+    # ## search grid meter ###
+    # ############################################################
+    # ############################################################
+    
+    def _find_grid(self):
+        logging.info("Searching GRID: Trial Nr. %d" % self._searchTrials)
+        try:
+            for service in self._dbusConn.list_names():
+                # logging.error('%s: service=%s' % ((dt.now()).strftime('%c'),service))
+                if GRID_KEY_WORD in service:
+                    self._grid = service
+                    logging.info("|- %s found." % ((self._dbusMon.dbusmon.get_value(service, "/ProductName")),))
+        except Exception:
+            (
+                exception_type,
+                exception_object,
+                exception_traceback,
+            ) = sys.exc_info()
+            file = exception_traceback.tb_frame.f_code.co_filename
+            line = exception_traceback.tb_lineno
+            logging.debug(f"Exception occurred: {repr(exception_object)} of type {exception_type} in {file} line #{line}")
+
+            pass
+            
+        if (self._grid != None):        
+            self._timeOld = tt.time()
+            GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._load_settings)
+             # all OK, stop calling this function 
+            return False
+        elif self._searchTrials < settings.SEARCH_TRIALS:
+            self._searchTrials += 1
+            # next trial
+            return True
+        else:
+            logging.error('%s: Grid meter not found. Exiting.' % (dt.now()).strftime('%c'))
+            t.sleep(settings.TIME_BEFORE_RESTART)
+            sys.exit(1)
+
+    # ############################################################
+    # ############################################################
+    # ## initial load of settings from dbus ###
+    # ############################################################
+    # ############################################################
+
+    def _load_settings(self):
+        logging.info('***  Load settings from dbus ... ***')
+        self._EssActive = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/Active',)
+        logging.info('%s: /settings/myEss/Active loaded = %g' % ((dt.now()).strftime('%c'), self._EssActive))
+        self._CorrectionI = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/CorrectionI')
+        self._MinSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/MinSocLimit')
+        self._SmoothFilter = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/SmoothFilter')
+        logging.info('%s: /settings/myEss/SmoothFilter loaded = %g' % ((dt.now()).strftime('%c'), self._SmoothFilter))
+        self._timeOld = tt.time()
+        GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
+
 
     # #################################################################################
     # #################################################################################
