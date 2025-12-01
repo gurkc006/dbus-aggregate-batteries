@@ -1468,7 +1468,8 @@ class DbusAggBatService(object):
         
         GridSetpoint = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/AcPowerSetPoint')
         #MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/CGwacs/BatteryLife/MinimumSocLimit')
-        MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/myEss/MinSocLimit')
+        #MinimumSocLimit = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/myEss/MinSocLimit')
+        MinimumSocLimit = self._MinSocLimit
 
         GridPower = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/Power')
         GridL1 = self._dbusMon.dbusmon.get_value(self._grid, '/Ac/L1/Power')
