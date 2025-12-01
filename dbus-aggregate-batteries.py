@@ -1528,8 +1528,6 @@ class DbusAggBatService(object):
 
         # APSp_noDischarge: prohibit battery discharge
         APSp_noDischarge = AcOutPower
-
-        logging.info('APSp1=%d | APSp2=%d | APSp4=%d | APSp5=%d | APSp_nD=%d' % (APSp1,APSp2,APSp4,APSp5,APSp_noDischarge))
         
         if (self._EssActive > 0):
             if (self._EssActive == 1):
@@ -1549,6 +1547,8 @@ class DbusAggBatService(object):
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
+
+        logging.info('1=%d | 2=%d | 4=%d | 5=%d | nD=%d | APS=%d' % (APSp1,APSp2,APSp4,APSp5,APSp_noDischarge,AcPowerSetpoint))
 
         # ### ESS code ################################################################################################
 
