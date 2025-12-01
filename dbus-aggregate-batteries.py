@@ -1528,7 +1528,7 @@ class DbusAggBatService(object):
         # APSp_noDischarge: prohibit battery discharge
         APSp_noDischarge = AcOutPower
 
-        logging.info('APSp1=%d | APSp2=%d | APSp3=%d | APSp4=%d | APSp5=%d | APSp_nD=%d' % (APSp1,APSp2,APSp3,APSp4,APSp5,APSp_noDischarge))
+        logging.info('APSp1=%d | APSp2=%d | APSp4=%d | APSp5=%d | APSp_nD=%d' % (APSp1,APSp2,APSp4,APSp5,APSp_noDischarge))
         
         if (self._EssActive > 0):
             if (self._EssActive == 1):
