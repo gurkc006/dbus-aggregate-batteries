@@ -145,6 +145,7 @@ class DbusMon:
                 '/Settings/MyEss/CorrectionI': dummy,
                 '/Settings/MyEss/MinSocLimit': dummy,
                 '/Settings/MyEss/SmoothFilter': dummy,
+                '/Settings/CGwacs/MaxDischargePower': dummy,
             },
             "com.victronenergy.system": {
                 "/SystemState/LowSoc": dummy,
