@@ -199,6 +199,7 @@ SEARCH_TRIALS: int = get_int_from_config("DEFAULT", "SEARCH_TRIALS")
 READ_TRIALS: int = get_int_from_config("DEFAULT", "READ_TRIALS")
 UPDATE_INTERVAL_FIND_DEVICES: int = get_int_from_config("DEFAULT", "UPDATE_INTERVAL_FIND_DEVICES")
 UPDATE_INTERVAL_DATA: int = get_int_from_config("DEFAULT", "UPDATE_INTERVAL_DATA")
+UPDATE_INTERVAL_MS: int = get_int_from_config("DEFAULT", "UPDATE_INTERVAL_MS")
 TIME_BEFORE_RESTART: int = get_int_from_config("DEFAULT", "TIME_BEFORE_RESTART")
 
 

@@ -665,7 +665,7 @@ class DbusAggBatService(object):
             else:
                 self._timeOld = tt.time()
                 # if current from BMS start the _update loop
-                GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
+                GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_MS, self._update)
 
             # all OK, stop calling this function
             return False
@@ -844,7 +844,7 @@ class DbusAggBatService(object):
         self._SmoothFilter = self._dbusMon.dbusmon.get_value('com.victronenergy.settings', '/Settings/MyEss/SmoothFilter')
         logging.info('|- /settings/myEss/SmoothFilter loaded = %g' % self._SmoothFilter)
         self._timeOld = tt.time()
-        GLib.timeout_add_seconds(settings.UPDATE_INTERVAL_DATA, self._update)
+        GLib.timeout_add(settings.UPDATE_INTERVAL_MS, self._update)
 
 
     # #################################################################################
