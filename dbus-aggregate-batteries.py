@@ -1543,11 +1543,11 @@ class DbusAggBatService(object):
             elif (self._EssActive == 4):  # winter?!
                 AcPowerSetpoint = min(APSp1,APSp4)
                 if (Soc < MinimumSocLimit):
-                    AcPowerSetpoint = APSp_noDischarge
+                    AcPowerSetpoint = min(AcpowerSetpoint,APSp_noDischarge)
             elif (self._EssActive == 5): # summer
                 AcPowerSetpoint = min(APSp5,APSp4)
                 if (Soc < MinimumSocLimit):
-                    AcPowerSetpoint = APSp_noDischarge
+                    AcPowerSetpoint = min(AcPowerSetpoint,APSp_noDischarge)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
         else:
             AcPowerSetpoint = self._dbusMon.dbusmon.get_value(self._multi, '/Hub4/L1/AcPowerSetpoint')
