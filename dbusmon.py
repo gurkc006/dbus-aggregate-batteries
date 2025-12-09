@@ -129,6 +129,8 @@ class DbusMon:
                 "/Devices/0/Ac/Out/P": dummy, 
                 "/Devices/0/Ac/Inverter/P": dummy,
                 '/Hub4/L1/AcPowerSetpoint': dummy,
+                '/Hub4/DisableCharge': dummy,
+                '/Hub4/DisableFeedIn': dummy,
             },
             "com.victronenergy.solarcharger": {
                 "/Dc/0/Current": dummy,

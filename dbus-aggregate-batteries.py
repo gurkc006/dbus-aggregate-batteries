@@ -367,10 +367,14 @@ class DbusAggBatService(object):
             if newvalue == 0:
                 self._EssActive = newvalue
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 1)
+                #self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/DisableCharge', 0)
+                #self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/DisableFeedIn', 0)
                 logging.info('%s: Hub4Mode set to normal control!' % ((dt.now()).strftime('%c')))
             elif newvalue > 0 and newvalue <=5:
                 self._EssActive = newvalue
                 self._dbusMon.dbusmon.set_value('com.victronenergy.settings', '/Settings/CGwacs/Hub4Mode', 3)
+                self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/DisableCharge', 0)
+                self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/DisableFeedIn', 0)
                 logging.info('%s: Hub4Mode set to external control!' % ((dt.now()).strftime('%c')))
             else:
                 logging.info('%s: wrong value! Reset to old value!' % ((dt.now()).strftime('%c')))
@@ -1515,7 +1519,7 @@ class DbusAggBatService(object):
         ###############################################################################
         
         # APSp1: compensate AC out power and charge battery with grid and MPPTs using maximum charge power
-        APSp1 = AcOutPower - MpptPower + MaxChargePowerSmooth + CorrectionPower
+        APSp1 = AcOutPower + (MaxChargePowerSmooth - MpptPower) + CorrectionPower
         
         # APSp2: maintain gridsetpoint using PvOnGrid and battery (?)
         APSp2 = GridSetpoint + PvOnGrid - ConsumptionInput
