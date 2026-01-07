@@ -1532,6 +1532,11 @@ class DbusAggBatService(object):
 
         # APSp_noDischarge: prohibit battery discharge
         APSp_noDischarge = AcOutPower
+
+        if (Soc < MinimumSocLimit):
+            SocOffset = 5
+        else:
+            SocOffset = 0
         
         if (self._EssActive > 0):
             if (self._EssActive == 1):
@@ -1542,11 +1547,11 @@ class DbusAggBatService(object):
                 AcPowerSetpoint = min(APSp1,APSp2)
             elif (self._EssActive == 4):  # winter?!
                 AcPowerSetpoint = min(APSp1,APSp4)
-                if (Soc < MinimumSocLimit):
+                if (Soc < (MinimumSocLimit + SocOffset)):
                     AcPowerSetpoint = max(min(APSp1,APSp4),APSp_noDischarge)
             elif (self._EssActive == 5): # summer
                 AcPowerSetpoint = min(APSp5,APSp4)
-                if (Soc < MinimumSocLimit):
+                if (Soc < (MinimumSocLimit + SocOffset)):
                     AcPowerSetpoint = max(min(APSp5,APSp4),APSp_noDischarge)
             self._dbusMon.dbusmon.set_value(self._multi, '/Hub4/L1/AcPowerSetpoint',AcPowerSetpoint)
             #switch off inverter
